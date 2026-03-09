@@ -1,15 +1,17 @@
 ---
 title: newapi
-description: newapi 是 New API 官方用户级 Skill 插件，支持 Claude Code、Cursor、Windsurf、Codex CLI 等 AI IDE。通过自然语言指令在编辑器内查询模型、管理令牌、查看分组和余额，无需切换窗口。安装简单，一行命令即可完成。
+description: newapi 是 New API 官方用户级 Skill 插件，支持 Claude Code、Codex 和 OpenClaw（龙虾）。通过自然语言指令在 AI 编码助手内查询模型、管理令牌、查看分组和余额，并直接提问 New API 的使用问题。
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
 <Callout type="info" title="什么是 newapi-skills？">
-  **newapi-skills** 是 New API 官方推出的 AI 编辑器 Skill 插件。Skill 是一种轻量级扩展协议，让 AI 编码助手（如 Claude Code、Cursor、Windsurf、Cline 等）能够在编辑器内**直接调用 New API 接口**，完成模型查询、令牌管理、余额查看等日常运维操作，实现真正的"编码即运维"工作流。
+  **newapi-skills** 是 New API 官方推出的 AI 编辑器 Skill 插件。Skill 是一种轻量级扩展协议，让 AI 编码助手（如 Claude Code、Codex、OpenClaw（龙虾）、Cursor、Windsurf、Cline 等）能够在编辑器内**直接调用 New API 接口**，完成模型查询、令牌管理、余额查看，以及提问 New API 部署、配置和 API 调用等使用问题，实现真正的"编码即运维"工作流。
 
   - GitHub 仓库：[github.com/QuantumNous/skills](https://github.com/QuantumNous/skills)
+
+  现在也支持在 OpenClaw（龙虾）中使用，你可以直接在对话工作流里调用 `/newapi` 指令完成模型查询、令牌管理、余额查看，也能直接提问 New API 的使用问题。
 </Callout>
 
 ## 为什么使用 Skills
@@ -18,7 +20,8 @@ import { Step, Steps } from 'fumadocs-ui/components/steps';
 
 **newapi-skills 解决的问题：**
 
-- **零切换**：在 Claude Code、Cursor 等 AI IDE 中直接输入自然语言指令，无需打开浏览器或管理后台
+- **零切换**：在 Claude Code、Codex、OpenClaw（龙虾）等 AI 编码助手中直接输入自然语言指令，无需打开浏览器或管理后台
+- **内置问答**：可直接提问 New API 的部署、配置、分组、模型调用格式等使用问题，快速获得帮助
 - **安全优先**：密钥永不明文显示，令牌复制与注入均通过安全通道完成（`sk-` 开头的密钥绝不会出现在终端或日志中）
 - **即装即用**：一行 `npx` 命令完成安装，自动检测运行时环境（Bun / Node.js / Deno）
 - **多编辑器兼容**：支持所有实现 Skills 协议的 AI 编辑器和编码助手
@@ -30,6 +33,7 @@ newapi-skills 可在以下 AI 编码工具中使用：
 | AI 编辑器 / 编码助手 | 类型 | 备注 |
 |----------------------|------|------|
 | **Claude Code** | 终端 AI 编程助手 | Anthropic 官方 CLI |
+| **OpenClaw** | 自托管 AI 助手平台 | 支持 Skills，可在对话中直接调用 `/newapi` 指令 |
 | **Cursor** | AI 原生代码编辑器 | 基于 VS Code |
 | **Windsurf** | AI 代码编辑器 | Codeium 出品 |
 | **Cline** | VS Code AI 扩展 | 开源 AI 编码代理 |
@@ -107,6 +111,8 @@ newapi-skills 可在以下 AI 编码工具中使用：
     - 输入 `/newapi models` 查看可用模型列表
     - 输入 `/newapi balance` 查看当前余额
     - 输入 `/newapi create-token my-app` 创建一个名为 `my-app` 的新令牌
+    - 输入 `/newapi help 如何配置模型分组和令牌？` 直接提问 New API 的使用问题
+    - 在 OpenClaw（龙虾）中同样可以直接调用 `/newapi models`、`/newapi balance` 等指令
   </Step>
 </Steps>
 

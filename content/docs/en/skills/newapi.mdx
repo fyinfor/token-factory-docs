@@ -1,15 +1,17 @@
 ---
 title: newapi
-description: newapi is the official New API user-level Skill plugin for AI editors like Claude Code, Cursor, Windsurf, and Codex CLI. Manage models, tokens, groups, and balance directly inside your AI coding assistant using natural language commands. One-line installation.
+description: newapi is the official New API user-level Skill for Claude Code, Codex, and OpenClaw. Query models, manage tokens, view groups, check balance, and ask New API usage questions directly inside your AI coding workflow.
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
 <Callout type="info" title="What is newapi-skills?">
-  **newapi-skills** is the official AI editor Skill plugin from New API. Skills are a lightweight extension protocol that enables AI coding assistants — such as Claude Code, Cursor, Windsurf, and Cline — to **call New API endpoints directly from within the editor**, performing model queries, token management, balance checks, and more without ever leaving your coding environment.
+  **newapi-skills** is the official AI editor Skill plugin from New API. Skills are a lightweight extension protocol that enables AI coding assistants — such as Claude Code, Codex, OpenClaw, Cursor, Windsurf, and Cline — to **call New API endpoints directly from within the editor**, performing model queries, token management, balance checks, and answering New API deployment, configuration, and API usage questions without ever leaving your coding environment.
 
   - GitHub Repository: [github.com/QuantumNous/skills](https://github.com/QuantumNous/skills)
+
+  It now also works inside OpenClaw, so you can run `/newapi` commands for models, tokens, groups, and balance, and ask New API usage questions without leaving your agent workflow.
 </Callout>
 
 ## Why Use Skills
@@ -18,7 +20,8 @@ During everyday AI development, developers frequently switch between their edito
 
 **What newapi-skills solves:**
 
-- **Zero context-switching**: Issue natural language commands directly in Claude Code, Cursor, or other AI IDEs — no browser or admin panel needed
+- **Zero context-switching**: Issue natural language commands directly in Claude Code, Codex, OpenClaw, or other AI IDEs — no browser or admin panel needed
+- **Built-in help**: Ask about New API deployment, configuration, groups, and API call formats directly from your coding workflow
 - **Security-first design**: Keys are never shown in plain text; token copy and injection use secure channels (`sk-` prefixed keys never appear in terminal output or logs)
 - **Instant setup**: A single `npx` command handles installation; runtime auto-detection (Bun / Node.js / Deno)
 - **Cross-editor compatibility**: Works with any AI editor or coding assistant that implements the Skills protocol
@@ -30,6 +33,7 @@ newapi-skills works with the following AI coding tools:
 | AI Editor / Coding Assistant | Type | Notes |
 |------------------------------|------|-------|
 | **Claude Code** | Terminal AI programming assistant | Official Anthropic CLI |
+| **OpenClaw** | Self-hosted AI assistant platform | Supports Skills-based `/newapi` command workflows |
 | **Cursor** | AI-native code editor | VS Code based |
 | **Windsurf** | AI code editor | By Codeium |
 | **Cline** | VS Code AI extension | Open-source AI coding agent |
@@ -107,6 +111,8 @@ Below is the complete list of commands provided by newapi-skills. These commands
     - Type `/newapi models` to list available models
     - Type `/newapi balance` to check your current balance
     - Type `/newapi create-token my-app` to create a new token named `my-app`
+    - Type `/newapi help how do I configure groups and tokens?` to ask New API usage questions directly
+    - In OpenClaw, you can also run `/newapi models`, `/newapi balance`, and token commands directly in your agent workflow
   </Step>
 </Steps>
 

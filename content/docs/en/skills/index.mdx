@@ -1,6 +1,6 @@
 ---
 title: Skills
-description: Official New API AI editor Skill plugins. Skills enable Claude Code, Cursor, Windsurf, Codex CLI and other AI coding assistants to manage New API resources directly, covering both user-level operations and admin tasks.
+description: Official New API Skill plugins for Claude Code, Codex, and OpenClaw. Manage models, tokens, groups, balance, and ask New API usage questions directly inside your AI coding workflow.
 ---
 
 import { Card, Cards } from 'fumadocs-ui/components/card';
@@ -8,7 +8,9 @@ import { User, Shield } from 'lucide-react';
 
 ## Overview
 
-**Skills** are a lightweight extension protocol that allows AI editors (such as Claude Code, Cursor, Windsurf, Codex CLI, etc.) to interact with New API directly from within your coding environment — no browser or admin panel needed.
+**Skills** are a lightweight extension protocol that allows AI editors (such as Claude Code, Codex, OpenClaw, Cursor, Windsurf, etc.) to interact with New API directly from within your coding environment — no browser or admin panel needed.
+
+New API Skills already work in Claude Code, Codex, OpenClaw, and other Skills-compatible tools for model queries, token management, balance checks, and New API usage questions.
 
 New API currently offers the following Skills:
 
@@ -16,7 +18,7 @@ New API currently offers the following Skills:
   <Card
     icon={<User />}
     title="newapi"
-    description="User-level Skill — query models, manage tokens, view groups and balance. For all New API users."
+    description="User-level Skill — query models, manage tokens, view groups, check balance, and ask New API usage questions in Claude Code, Codex, and OpenClaw."
     href="/en/docs/skills/newapi"
   />
   <Card
@@ -34,6 +36,7 @@ All Skills work with the following AI coding tools:
 | AI Editor / Coding Assistant | Type | Notes |
 |------------------------------|------|-------|
 | **Claude Code** | Terminal AI programming assistant | Official Anthropic CLI |
+| **OpenClaw** | Self-hosted AI assistant platform | Supports Skills-based `/newapi` command workflows |
 | **Cursor** | AI-native code editor | VS Code based |
 | **Windsurf** | AI code editor | By Codeium |
 | **Cline** | VS Code AI extension | Open-source AI coding agent |

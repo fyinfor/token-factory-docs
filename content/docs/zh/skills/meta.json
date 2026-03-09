@@ -1,6 +1,6 @@
 {
   "title": "Skills",
-  "description": "AI 编辑器 Skills 扩展",
+  "description": "New API Skills，支持 Claude Code、Codex、OpenClaw（龙虾），可提问使用问题",
   "icon": "Puzzle",
   "root": true,
   "pages": [

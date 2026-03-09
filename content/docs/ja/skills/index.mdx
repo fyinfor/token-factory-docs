@@ -1,6 +1,6 @@
 ---
 title: Skills
-description: New API 公式 AI エディター Skill プラグイン一覧。Skills により Claude Code、Cursor、Windsurf、Codex CLI などの AI コーディングアシスタントが New API リソースを直接管理でき、ユーザー操作と管理者運用の両方をカバーします。
+description: New API 公式 AI エディター Skill プラグイン一覧。Claude Code、Codex、OpenClaw に対応し、モデル、トークン、グループ、残高を管理し、New API の使い方も AI コーディング環境内で直接質問できます。
 ---
 
 import { Card, Cards } from 'fumadocs-ui/components/card';
@@ -8,7 +8,9 @@ import { User, Shield } from 'lucide-react';
 
 ## 概要
 
-**Skills** は軽量な拡張プロトコルで、AI エディター（Claude Code、Cursor、Windsurf、Codex CLI など）がコーディング環境内で New API と直接やり取りできます。ブラウザや管理パネルに切り替える必要はありません。
+**Skills** は軽量な拡張プロトコルで、AI エディター（Claude Code、Codex、OpenClaw、Cursor、Windsurf など）がコーディング環境内で New API と直接やり取りできます。ブラウザや管理パネルに切り替える必要はありません。
+
+New API Skills は Claude Code、Codex、OpenClaw などのツールで、モデル照会、トークン管理、残高確認に加えて、New API の使い方も直接質問できます。
 
 New API は現在以下の Skills を提供しています：
 
@@ -16,7 +18,7 @@ New API は現在以下の Skills を提供しています：
   <Card
     icon={<User />}
     title="newapi"
-    description="ユーザー向け Skill — モデル照会、トークン管理、グループ・残高の確認。すべての New API ユーザー向け。"
+    description="ユーザー向け Skill — Claude Code、Codex、OpenClaw でモデル照会、トークン管理、グループ・残高の確認に加えて、New API の使い方も質問可能。"
     href="/ja/docs/skills/newapi"
   />
   <Card
@@ -34,6 +36,7 @@ New API は現在以下の Skills を提供しています：
 | AI エディター / コーディングアシスタント | 種類 | 備考 |
 |----------------------------------------|------|------|
 | **Claude Code** | ターミナル AI プログラミングアシスタント | Anthropic 公式 CLI |
+| **OpenClaw** | セルフホスト型 AI アシスタントプラットフォーム | Skills に対応し、対話内で `/newapi` コマンドを直接実行可能 |
 | **Cursor** | AI ネイティブコードエディター | VS Code ベース |
 | **Windsurf** | AI コードエディター | Codeium 製 |
 | **Cline** | VS Code AI 拡張機能 | オープンソース AI コーディングエージェント |

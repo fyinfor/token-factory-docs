@@ -2,28 +2,17 @@
 title: Channels
 ---
 
-Here you can manage NewAPI's upstream channels
+Here you can manage NewAPI's upstream Channels.
 
-![渠道](/assets/guide/channel.png)
+![Channels](/assets/guide/channel.png)
 
 ## Channel Creation/Editing Page
 
-![渠道管理1](/assets/guide/create-channel-1.png)
+![Channel Management 1](/assets/guide/create-channel-1.png)
 
-![渠道管理2](/assets/guide/create-channel-2.png)
+![Channel Management 2](/assets/guide/create-channel-2.png)
 
-![渠道管理3](/assets/guide/create-channel-3.png)
-
-## Special Channel Parameters for Coding Plan Packages
-
-If using a Coding Plan package, the `API Address` field should not be filled with an actual URL, but with the corresponding special identifier:
-
-| Package Name | Channel Type Selection | API Address (Enter Identifier) |
-| --- | --- | --- |
-| GLM Coding Plan | Zhipu GLM 4V | `glm-coding-plan` |
-| GLM Coding Plan (International Version) | Zhipu GLM 4V | `glm-coding-plan-international` |
-| Kimi Coding Plan | Moonshot | `kimi-coding-plan` |
-| Doubao Coding Plan | ByteDance Volcano Engine, Doubao General | Select `doubao-coding-plan` from dropdown |
+![Channel Management 3](/assets/guide/create-channel-3.png)
 
 # Parameter Override Settings Documentation
 
@@ -35,7 +24,7 @@ The parameter override system supports two modes: simple override mode (backward
 
 ### Simple Override Mode
 
-For backward compatibility, directly specify the fields and values to be overridden, and the system will merge these fields into the original request.
+Backward compatible, directly specify the fields and values to be overridden, and the system will merge these fields into the original request.
 
 ```json
 {
@@ -47,7 +36,7 @@ For backward compatibility, directly specify the fields and values to be overrid
 
 ### Advanced Operation Mode
 
-Define complex parameter operations using the `operations` array, supporting advanced features such as conditional judgments, array operations, string concatenation, and string normalization.
+Define complex parameter operations through the `operations` array, supporting advanced features such as conditional judgments, array operations, string concatenation, and string normalization.
 
 #### Basic Structure
 
@@ -65,13 +54,13 @@ Define complex parameter operations using the `operations` array, supporting adv
 }
 ```
 
-**Field Description (Fill as needed):**
+**Field Description (fill as needed):**
 
 - `mode`: Required
 - `path`: Applicable to `set` / `delete` / `append` / `prepend` / `trim_prefix` / `trim_suffix` / `ensure_prefix` / `ensure_suffix` / `trim_space` / `to_lower` / `to_upper` / `replace` / `regex_replace`
-- `value`: Commonly used with `set` / `append` / `prepend` / `trim_prefix` / `trim_suffix` / `ensure_prefix` / `ensure_suffix`
+- `value`: Commonly used in `set` / `append` / `prepend` / `trim_prefix` / `trim_suffix` / `ensure_prefix` / `ensure_suffix`
 - `from` / `to`: Applicable to `move` / `copy` / `replace` / `regex_replace`
-- `keep_origin`: Used for `set` (skips if value already exists) and for object merging in `append` / `prepend`
+- `keep_origin`: Used for `set` (skips if value already exists) and for `append` / `prepend` during object merging.
 
 ## Operation Modes (mode)
 
@@ -90,7 +79,7 @@ Sets the value at the specified path.
 
 **Parameter Description:**
 
-- `keep_origin`: When `true`, skips setting if a value already exists at the target path.
+- `keep_origin`: When `true`, if the target path already has a value, setting is skipped.
 
 ### 2. delete - Delete Field
 
@@ -153,7 +142,7 @@ Adds new content before existing content.
 
 ### 6. copy - Copy Field
 
-Copies the value from the `from` path to the `to` path (does not delete the source field).
+Copies the value from the path specified by `from` to the path specified by `to` (does not delete the source field).
 
 ```json
 {
@@ -170,7 +159,7 @@ Copies the value from the `from` path to the `to` path (does not delete the sour
 
 ### 7. trim_prefix - Trim Prefix
 
-Removes the specified prefix from a string field (remains unchanged if no match).
+Removes the specified prefix from a string field (if it doesn't match, it remains unchanged).
 
 ```json
 {
@@ -186,7 +175,7 @@ Removes the specified prefix from a string field (remains unchanged if no match)
 
 ### 8. trim_suffix - Trim Suffix
 
-Removes the specified suffix from a string field (remains unchanged if no match).
+Removes the specified suffix from a string field (if it doesn't match, it remains unchanged).
 
 ```json
 {
@@ -202,7 +191,7 @@ Removes the specified suffix from a string field (remains unchanged if no match)
 
 ### 9. ensure_prefix - Ensure Prefix
 
-Ensures a string field starts with the specified prefix (remains unchanged if already present).
+Ensures a string field starts with the specified prefix (if it already exists, it remains unchanged).
 
 ```json
 {
@@ -218,7 +207,7 @@ Ensures a string field starts with the specified prefix (remains unchanged if al
 
 ### 10. ensure_suffix - Ensure Suffix
 
-Ensures a string field ends with the specified suffix (remains unchanged if already present).
+Ensures a string field ends with the specified suffix (if it already exists, it remains unchanged).
 
 ```json
 {
@@ -232,7 +221,7 @@ Ensures a string field ends with the specified suffix (remains unchanged if alre
 
 - `value`: Required and cannot be an empty string.
 
-### 11. trim_space - Trim Whitespace
+### 11. trim_space - Trim Leading/Trailing Whitespace
 
 Performs `TrimSpace` on a string field (spaces, newlines, tabs, etc., will be removed).
 
@@ -265,7 +254,7 @@ Converts a string field to uppercase.
 }
 ```
 
-### 14. replace - String Replacement
+### 14. replace - String Replace
 
 Performs substring replacement on a string field.
 
@@ -283,9 +272,9 @@ Performs substring replacement on a string field.
 - `from`: Required and cannot be an empty string.
 - `to`: Optional, equivalent to an empty string if omitted.
 
-### 15. regex_replace - Regex Replacement
+### 15. regex_replace - Regex Replace
 
-Performs regex matching and replacement on a string field.
+Performs regular expression matching and replacement on a string field.
 
 ```json
 {
@@ -303,7 +292,7 @@ Performs regex matching and replacement on a string field.
 
 ## Conditional Judgment
 
-Set conditions for operation execution using the `conditions` array; the corresponding operation will only be executed when the conditions are met.
+Set the conditions for operation execution using the `conditions` array; the corresponding operation will only be executed when the conditions are met.
 
 ### Condition Structure
 
@@ -334,36 +323,37 @@ Set conditions for operation execution using the `conditions` array; the corresp
 - `lte`: Less than or equal to (numeric types only)
 
 - Note:
-  * Numeric comparisons can only be used for numeric types.
-  * String operations (prefix, suffix, contains) will convert values to strings for comparison.
+
+* Numeric comparisons can only be used for numeric types.
+* String operations (prefix, suffix, contains) will convert values to strings for comparison.
 
 ### Condition Parameter Description
 
-- `invert`: Invert function, `true` means to negate the result.
+- `invert`: Invert function, `true` means negate the result.
 - `pass_missing_key`: Behavior when the specified path does not exist.
-  - `true`: Condition passes if the path does not exist.
-  - `false`: Condition fails if the path does not exist (default).
+  - `true`: Condition passes if path does not exist.
+  - `false`: Condition does not pass if path does not exist (default).
 
 ### Logical Relationship (logic)
 
 - `AND`: All conditions must be met.
-- `OR`: Any one condition being met is sufficient (default).
+- `OR`: Any condition met is sufficient (default).
 
 ## Path Syntax
 
 Use JSON path syntax to access nested fields:
 
 - `temperature` - Root-level field
-- `messages.0.content` - The `content` field of the first element in the array.
-- `messages.-1.content` - The `content` field of the last element in the array.
-- `metadata.user.name` - Nested object field
+- `messages.0.content` - The content field of the first element in the array.
+- `messages.-1.content` - The content field of the last element in the array.
+- `metadata.user.name` - Nested object field.
 
-Additionally, `path` supports the following built-in variables (which do not need to explicitly exist in the request body) and can be directly used for conditional judgments:
+Additionally, `path` supports the following built-in variables (no need to explicitly exist in the request body), which can be directly used for conditional judgments:
 
 | Variable | Meaning | Typical Use |
 | --- | --- | --- |
-| `model` / `upstream_model` | The target model after redirection | Conditional matching based on the actual upstream model called |
-| `original_model` | The target model before redirection | Conditional matching based on the original model requested by the user |
+| `model` / `upstream_model` | Target model after redirection | Conditional matching based on the actual upstream model called |
+| `original_model` | Target model before redirection | Conditional matching based on the original model requested by the user |
 
 ## Practical Examples
 
@@ -425,7 +415,7 @@ Add a system message at the beginning of the message array:
 
 ### 3. Adjust Parameters Based on Model Type
 
-Set different `max_tokens` based on different models:
+Set different max_tokens based on different models:
 
 ```json
 {
@@ -460,7 +450,7 @@ Set different `max_tokens` based on different models:
 
 ### 4. Multiple Condition Combination (AND Logic)
 
-Operations are executed only when multiple conditions are met simultaneously:
+Execute the operation only when multiple conditions are met simultaneously:
 
 ```json
 {
@@ -489,7 +479,7 @@ Operations are executed only when multiple conditions are met simultaneously:
 
 ### 5. Numeric Comparison Conditions
 
-Perform conditional judgment based on numerical values:
+Perform conditional judgment based on numerical size:
 
 ```json
 {
@@ -574,6 +564,6 @@ Append instructions after the user message:
 }
 ```
 
-## Notes
+## Important Notes
 
-**Execution Order**: Operations are executed sequentially in the order they appear in the `operations` array; earlier operations may affect subsequent ones.
+**Execution Order**: Operations are executed sequentially according to their order in the `operations` array; earlier operations may affect subsequent operations.

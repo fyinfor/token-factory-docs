@@ -7,19 +7,19 @@
 @theme {
   --spacing-fd-container: 1436px;
 
-  /* Pink theme color */
-  --color-brand: hsl(330, 70%, 55%);
+  /* Blue theme color */
+  --color-brand: #0064fa;
   --color-brand-foreground: white;
-  --color-brand-secondary: hsl(340, 75%, 65%);
-  --color-brand-secondary-foreground: hsl(330, 60%, 20%);
-  --color-brand-200: hsl(330, 65%, 75%);
+  --color-brand-secondary: hsl(217, 95%, 60%);
+  --color-brand-secondary-foreground: hsl(217, 90%, 15%);
+  --color-brand-200: hsl(217, 90%, 75%);
 
   /* Fumadocs UI theme color (for navigation, TOC, etc.) */
-  --color-fd-primary: hsl(330, 70%, 55%);
+  --color-fd-primary: #0064fa;
   --color-fd-primary-foreground: white;
 
-  --color-landing-foreground: #5c3a4a;
-  --color-landing-foreground-200: #a87b8b;
+  --color-landing-foreground: #1e3a5f;
+  --color-landing-foreground-200: #5b7fa8;
 
   /* System fonts */
   --font-sans:
@@ -31,18 +31,18 @@
 }
 
 .dark {
-  --color-landing-foreground: #f5e0ea;
-  --color-landing-foreground-200: #e0b8d0;
+  --color-landing-foreground: #d4e4f7;
+  --color-landing-foreground-200: #a8c7e7;
 
-  /* Pink theme color (dark mode) */
-  --color-brand: hsl(330, 85%, 70%);
-  --color-brand-secondary: hsl(340, 80%, 75%);
-  --color-brand-secondary-foreground: hsl(330, 60%, 10%);
+  /* Blue theme color (dark mode) */
+  --color-brand: hsl(217, 95%, 65%);
+  --color-brand-secondary: hsl(217, 90%, 70%);
+  --color-brand-secondary-foreground: hsl(217, 80%, 10%);
   --color-brand-foreground: black;
-  --color-brand-200: hsl(330, 80%, 85%);
+  --color-brand-200: hsl(217, 85%, 80%);
 
   /* Fumadocs UI theme color (for navigation, TOC, etc. - dark mode) */
-  --color-fd-primary: hsl(330, 85%, 70%);
+  --color-fd-primary: hsl(217, 95%, 65%);
   --color-fd-primary-foreground: black;
 }
 
@@ -89,4 +89,29 @@ body {
   ) {
   margin-top: 0;
   margin-bottom: 0;
+}
+
+/* ==================== Home Page Clean Background ==================== */
+.home-banner-bg {
+  position: relative;
+  background: linear-gradient(180deg, 
+    #e3f0ff 0%, 
+    #ffffff 50%,
+    #f5f8ff 100%);
+}
+
+/* 浅色主题 - 清晰的渐变效果 */
+html:not(.dark) .home-banner-bg {
+  background: linear-gradient(180deg, 
+    #e3f0ff 0%, 
+    #ffffff 50%,
+    #f5f8ff 100%);
+}
+
+/* 暗色主题 */
+html.dark .home-banner-bg {
+  background: linear-gradient(180deg, 
+    rgba(0, 100, 250, 0.15) 0%, 
+    transparent 50%,
+    rgba(0, 100, 250, 0.08) 100%);
 }

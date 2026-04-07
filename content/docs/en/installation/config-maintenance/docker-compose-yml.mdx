@@ -2,11 +2,11 @@
 title: Docker Compose Configuration Guide
 ---
 
-This document details the Docker Compose configuration options for New API, applicable to various deployment scenarios.
+This document details the Docker Compose configuration options for TokenFactory, applicable to various deployment scenarios.
 
 ## Basic Configuration Structure
 
-The Docker Compose configuration file `docker-compose.yml` defines how the New API service and its dependent services (such as MySQL, Redis) are deployed.
+The Docker Compose configuration file `docker-compose.yml` defines how the TokenFactory service and its dependent services (such as MySQL, Redis) are deployed.
 
 ## Standard Configuration (Recommended for Production)
 
@@ -30,9 +30,9 @@ Below is the standard Docker Compose configuration, suitable for most production
 version: '3.4' # For compatibility with older Docker versions
 
 services:
-  new-api:
-    image: calciumion/new-api:latest
-    container_name: new-api
+  token-factory:
+    image: calciumion/token-factory:latest
+    container_name: token-factory
     restart: always
     command: --log-dir /app/logs
     ports:
@@ -41,8 +41,8 @@ services:
       - ./data:/data
       - ./logs:/app/logs
     environment:
-      - SQL_DSN=postgresql://root:123456@postgres:5432/new-api # ⚠️ IMPORTANT: Change the password in production!
-      #      - SQL_DSN=root:123456@tcp(mysql:3306)/new-api  # Point to the mysql service, uncomment if using MySQL
+      - SQL_DSN=postgresql://root:123456@postgres:5432/token-factory # ⚠️ IMPORTANT: Change the password in production!
+      #      - SQL_DSN=root:123456@tcp(mysql:3306)/token-factory  # Point to the mysql service, uncomment if using MySQL
       - REDIS_CONN_STRING=redis://redis
       - TZ=Asia/Shanghai
       - ERROR_LOG_ENABLED=true # Whether to enable error logging
@@ -77,7 +77,7 @@ services:
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: 123456 # ⚠️ IMPORTANT: Change this password in production!
-      POSTGRES_DB: new-api
+      POSTGRES_DB: token-factory
     volumes:
       - pg_data:/var/lib/postgresql/data
 #    ports:
@@ -89,7 +89,7 @@ services:
 #    restart: always
 #    environment:
 #      MYSQL_ROOT_PASSWORD: 123456  # ⚠️ IMPORTANT: Change this password in production!
-#      MYSQL_DATABASE: new-api
+#      MYSQL_DATABASE: token-factory
 #    volumes:
 #      - mysql_data:/var/lib/mysql
 #    ports:
@@ -102,13 +102,13 @@ volumes:
 
 ## Simplified Configuration (Suitable for Testing)
 
-For testing purposes, you can use the following simplified version, which only includes the New API service itself:
+For testing purposes, you can use the following simplified version, which only includes the TokenFactory service itself:
 
 ```yaml
 services:
-  new-api:
-    image: calciumion/new-api:latest
-    container_name: new-api
+  token-factory:
+    image: calciumion/token-factory:latest
+    container_name: token-factory
     restart: always
     ports:
       - '3000:3000'
@@ -120,27 +120,27 @@ services:
 
 ## Configuration Details
 
-### New API Service Configuration
+### TokenFactory Service Configuration
 
 | Parameter        | Description                                                                    |
 | ---------------- | ------------------------------------------------------------------------------ |
-| `image`          | Image name, usually `calciumion/new-api:latest` to get the latest version      |
+| `image`          | Image name, usually `calciumion/token-factory:latest` to get the latest version      |
 | `container_name` | Container name, customizable                                                   |
 | `restart`        | Container restart policy, recommended to set to `always` for automatic restart |
 | `command`        | Startup command, customizable startup parameters                               |
 | `ports`          | Port mapping, by default maps container's 3000 port to host's 3000 port        |
 | `volumes`        | Volume mapping, ensures data persistence                                       |
-| `environment`    | Environment variable settings, used to configure New API behavior              |
+| `environment`    | Environment variable settings, used to configure TokenFactory behavior              |
 | `depends_on`     | Dependent services, ensures startup in the correct order                       |
 | `healthcheck`    | Health check configuration, used to monitor service status                     |
 
 ### Environment Variable Description
 
-New API supports various environment variable configurations. Here are some commonly used ones:
+TokenFactory supports various environment variable configurations. Here are some commonly used ones:
 
 | Environment Variable | Description                                         | Example                               |
 | -------------------- | --------------------------------------------------- | ------------------------------------- |
-| `SQL_DSN`            | Database connection string                          | `root:123456@tcp(mysql:3306)/new-api` |
+| `SQL_DSN`            | Database connection string                          | `root:123456@tcp(mysql:3306)/token-factory` |
 | `REDIS_CONN_STRING`  | Redis connection string                             | `redis://redis`                       |
 | `TZ`                 | Time zone setting                                   | `Asia/Shanghai`                       |
 | `SESSION_SECRET`     | Session secret (required for multi-node deployment) | `your_random_string`                  |
@@ -157,14 +157,14 @@ For multi-node deployment scenarios, the configuration for master and slave node
 
 ```yaml
 services:
-  new-api-master:
-    image: calciumion/new-api:latest
-    container_name: new-api-master
+  token-factory-master:
+    image: calciumion/token-factory:latest
+    container_name: token-factory-master
     restart: always
     ports:
       - '3000:3000'
     environment:
-      - SQL_DSN=root:123456@tcp(mysql:3306)/new-api
+      - SQL_DSN=root:123456@tcp(mysql:3306)/token-factory
       - REDIS_CONN_STRING=redis://redis
       - SESSION_SECRET=your_unique_session_secret
       - CRYPTO_SECRET=your_unique_crypto_secret
@@ -177,14 +177,14 @@ services:
 
 ```yaml
 services:
-  new-api-slave:
-    image: calciumion/new-api:latest
-    container_name: new-api-slave
+  token-factory-slave:
+    image: calciumion/token-factory:latest
+    container_name: token-factory-slave
     restart: always
     ports:
       - '3001:3000' # Note the different port mapping
     environment:
-      - SQL_DSN=root:123456@tcp(mysql:3306)/new-api
+      - SQL_DSN=root:123456@tcp(mysql:3306)/token-factory
       - REDIS_CONN_STRING=redis://redis
       - SESSION_SECRET=your_unique_session_secret # Must be the same as the master node
       - CRYPTO_SECRET=your_unique_crypto_secret # Must be the same as the master node

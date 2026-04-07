@@ -1,10 +1,10 @@
 ---
 title: LunaTranslator - オープンソース GalGame 翻訳ツール
-description: LunaTranslator 設定ガイド — HOOK、OCR、AI翻訳エンジンを搭載したオープンソースのGalGame・ビジュアルノベル翻訳ツール。New API 連携で翻訳精度を向上。
+description: LunaTranslator 設定ガイド — HOOK、OCR、AI翻訳エンジンを搭載したオープンソースのGalGame・ビジュアルノベル翻訳ツール。TokenFactory 連携で翻訳精度を向上。
 ---
 
 <Callout type="info" title="チャット設定オプション">
-  New API コンソールのシステム設定 ->
+  TokenFactory コンソールのシステム設定 ->
   チャット設定で、以下のショートカットオプションを追加できます。これにより、トークン管理ページからLunaTranslatorへワンクリックで設定を投入できます。
 </Callout>
 
@@ -47,7 +47,7 @@ LunaTranslatorは、ローカルにデプロイされたNewAPIおよびNewAPIを
 
 ### ワンクリック設定
 
-1.  New API コンソールの`システム設定` -> `チャット設定`で、以下のショートカットオプションを追加します。
+1.  TokenFactory コンソールの`システム設定` -> `チャット設定`で、以下のショートカットオプションを追加します。
 
     ```json
     { "LunaTranslator": "lunatranslator://llmapi/base64?data={cheryConfig}" }

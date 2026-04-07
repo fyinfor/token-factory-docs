@@ -5,7 +5,7 @@ title: 環境変数設定ガイド
 このドキュメントでは、New APIがサポートするすべての環境変数とその設定について説明します。これらの環境変数を設定することで、システムの動作をカスタマイズできます。
 
 <Callout type="info" title="ヒント">
-  New API は `.env` ファイルから環境変数を読み込むことをサポートしています。`.env.example`
+  TokenFactory は `.env` ファイルから環境変数を読み込むことをサポートしています。`.env.example`
   ファイルを参照し、使用する際は `.env` に名前を変更してください。
 </Callout>
 
@@ -21,12 +21,12 @@ title: 環境変数設定ガイド
 
 | 環境変数                | 説明                           | デフォルト値                   | 例                                                                                                                             |
 | ----------------------- | ------------------------------ | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| `SQL_DSN`               | データベース接続文字列         | SQLite (`one-api.db`) | MySQL: `SQL_DSN=root:123456@tcp(localhost:3306)/new-api` \| PostgreSQL: `SQL_DSN=postgresql://root:123456@postgres:5432/new-api` |
+| `SQL_DSN`               | データベース接続文字列         | SQLite (`one-api.db`) | MySQL: `SQL_DSN=root:123456@tcp(localhost:3306)/token-factory` \| PostgreSQL: `SQL_DSN=postgresql://root:123456@postgres:5432/token-factory` |
 | `SQL_MAX_IDLE_CONNS`    | アイドル接続プールの最大接続数 | `100`                    | `SQL_MAX_IDLE_CONNS=50`                                                                                                          |
 | `SQL_MAX_OPEN_CONNS`    | 接続プールの最大オープン接続数 | `1000`                   | `SQL_MAX_OPEN_CONNS=500`                                                                                                         |
 | `SQL_MAX_LIFETIME`      | 接続の最大ライフタイム（秒）   | `60`                     | `SQL_MAX_LIFETIME=120`                                                                                                           |
 | `LOG_SQL_DSN`           | ログテーブル独立データベース接続文字列 | -                        | `LOG_SQL_DSN=root:123456@tcp(localhost:3306)/oneapi_logs`                                                                        |
-| `SQLITE_PATH`           | SQLiteデータベースパス         | `one-api.db`             | `SQLITE_PATH=/var/lib/new-api/new-api.db`                                                                                        |
+| `SQLITE_PATH`           | SQLiteデータベースパス         | `one-api.db`             | `SQLITE_PATH=/var/lib/token-factory/token-factory.db`                                                                                        |
 
 ## キャッシュ設定
 
@@ -191,10 +191,10 @@ title: 環境変数設定ガイド
 | 環境変数 | 説明                                 | デフォルト値 | 例                           |
 |---------|--------------------------------------|--------------|------------------------------|
 | `PYROSCOPE_URL` | Pyroscopeサーバーアドレス、空欄で無効 | -            | `PYROSCOPE_URL=http://pyroscope:4040` |
-| `PYROSCOPE_APP_NAME` | レポートするアプリケーション名     | `new-api`    | `PYROSCOPE_APP_NAME=my-api`  |
+| `PYROSCOPE_APP_NAME` | レポートするアプリケーション名     | `token-factory`    | `PYROSCOPE_APP_NAME=my-api`  |
 | `PYROSCOPE_BASIC_AUTH_USER` | Pyroscope Basic Authユーザー名 | -            | `PYROSCOPE_BASIC_AUTH_USER=admin` |
 | `PYROSCOPE_BASIC_AUTH_PASSWORD` | Pyroscope Basic Authパスワード | -            | `PYROSCOPE_BASIC_AUTH_PASSWORD=secret` |
-| `HOSTNAME` | レポートするホスト名ラベル           | `new-api`    | `HOSTNAME=node-1`            |
+| `HOSTNAME` | レポートするホスト名ラベル           | `token-factory`    | `HOSTNAME=node-1`            |
 | `PYROSCOPE_MUTEX_RATE` | ミューテックス分析サンプリングレート | `5`          | `PYROSCOPE_MUTEX_RATE=10`    |
 | `PYROSCOPE_BLOCK_RATE` | ブロッキング分析サンプリングレート | `5`          | `PYROSCOPE_BLOCK_RATE=10`    |
 
@@ -276,8 +276,8 @@ SYNC_FREQUENCY=60
 
 ```yaml
 services:
-  new-api:
-    image: calciumion/new-api:latest
+  token-factory:
+    image: calciumion/token-factory:latest
     environment:
       - TZ=Asia/Shanghai
       - SQL_DSN=root:123456@tcp(mysql:3306)/oneapi

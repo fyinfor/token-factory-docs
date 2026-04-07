@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // Configuration
-const SOURCE_REPO = process.env.SOURCE_REPO || 'QuantumNous/new-api';
+const SOURCE_REPO = process.env.SOURCE_REPO || 'fyinfor/token-factory';
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
 const MAX_RELEASES = 30;
 

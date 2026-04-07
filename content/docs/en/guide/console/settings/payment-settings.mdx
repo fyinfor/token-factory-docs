@@ -61,7 +61,7 @@ In "Top-up Methods", you can configure according to the following structure:
 - type: Channel identifier, used for backend routing and order placement.
   - `stripe` → Uses Stripe gateway.
   - Others (e.g., `alipay`, `wxpay`, `custom1`, etc.) → Uses EPay-style gateway, and passes this value as a channel parameter.
-  - Detailed logic can be found in the backend controller `controller/topup.go` (Reference: [controller/topup.go](https://github.com/QuantumNous/new-api/blob/main/controller/topup.go)).
+  - Detailed logic can be found in the backend controller `controller/topup.go` (Reference: [controller/topup.go](https://github.com/fyinfor/token-factory/blob/main/controller/topup.go)).
 - min_topup: Minimum top-up amount (unit consistent with page currency). If the entered amount is less than this value, the page will prompt "The minimum top-up amount for this payment method is X" and restrict initiating payment; the backend will also perform validation.
 - Order: Rendered from left to right according to array order.
 
@@ -92,4 +92,4 @@ Set discounts corresponding to different top-up amounts, where the key is the to
 - Key: Top-up amount (string format)
 - Value: Discount rate (decimal between 0-1, e.g., 0.95 means 95% of the price, i.e., 5% discount)
 - The system will automatically calculate the actual payment amount and savings based on the configuration.
-- Detailed implementation logic can be found in the backend controller [controller/topup.go](https://github.com/QuantumNous/new-api/blob/main/controller/topup.go)
+- Detailed implementation logic can be found in the backend controller [controller/topup.go](https://github.com/fyinfor/token-factory/blob/main/controller/topup.go)

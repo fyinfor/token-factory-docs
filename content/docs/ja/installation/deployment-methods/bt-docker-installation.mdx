@@ -32,7 +32,7 @@ title: 宝塔パネルへのデプロイ
 2. **New-API** を検索して見つけます
 3. **インストール** をクリックします
 4. 以下の基本オプションを設定します：
-   - **コンテナ名**：カスタマイズ可能、デフォルトは `new-api`
+   - **コンテナ名**：カスタマイズ可能、デフォルトは `token-factory`
    - **ポートマッピング**：デフォルトは `3000:3000`
    - **環境変数**：
      - `SESSION_SECRET`：セッションシークレット（**必須**、マルチノードデプロイ時は統一必須）
@@ -45,15 +45,15 @@ title: 宝塔パネルへのデプロイ
 
 より多くのカスタム設定が必要なシナリオに適しています。
 
-1. 宝塔パネルでウェブサイトディレクトリを作成します（例：`/www/wwwroot/new-api`）
+1. 宝塔パネルでウェブサイトディレクトリを作成します（例：`/www/wwwroot/token-factory`）
 2. `docker-compose.yml`ファイルを作成します：
 
 ```yaml
 version: '3'
 services:
-  new-api:
-    image: calciumion/new-api:latest
-    container_name: new-api
+  token-factory:
+    image: calciumion/token-factory:latest
+    container_name: token-factory
     restart: always
     ports:
       - "3000:3000"
@@ -67,7 +67,7 @@ services:
 3. SSHターミナルでディレクトリに移動し、起動します：
 
 ```bash
-cd /www/wwwroot/new-api
+cd /www/wwwroot/token-factory
 docker-compose up -d
 ```
 
@@ -79,12 +79,12 @@ docker-compose up -d
 
 1. 宝塔パネルのDocker機能で、**イメージ管理** をクリックします
 2. **イメージ取得** → **イメージプル** をクリックします
-3. イメージ名を入力：`calciumion/new-api:latest`
+3. イメージ名を入力：`calciumion/token-factory:latest`
 4. **送信** をクリックし、イメージのプルが完了するまで待ちます
 5. プル完了後、**コンテナリスト** に入り、**コンテナ作成** をクリックします
 6. 以下の情報を入力します：
-   - **コンテナ名**：`new-api`（カスタマイズ可能）
-   - **イメージ**：プルした `calciumion/new-api:latest` を選択
+   - **コンテナ名**：`token-factory`（カスタマイズ可能）
+   - **イメージ**：プルした `calciumion/token-factory:latest` を選択
    - **ポートマッピング**：`3000:3000` を追加
    - **ディレクトリマッピング**：`/your/host/path:/data` を追加（ホストパスに置き換え）
    - **環境変数**：必要に応じて追加
@@ -142,7 +142,7 @@ volumes:
 
 ```bash
 # 最新イメージをプル
-docker pull calciumion/new-api:latest
+docker pull calciumion/token-factory:latest
 
 # Docker Composeで再起動
 docker-compose down && docker-compose up -d
@@ -155,4 +155,4 @@ docker-compose down && docker-compose up -d
 - [環境変数設定](/docs/installation/config-maintenance/environment-variables)
 - [Docker Composeデプロイ](/docs/installation/deployment-methods/docker-compose-installation)
 - [FAQ](/docs/support/faq)
-- [GitHubリポジトリ](https://github.com/QuantumNous/new-api)
+- [GitHubリポジトリ](https://github.com/fyinfor/token-factory)

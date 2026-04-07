@@ -5,7 +5,7 @@ title: 环境变量配置指南
 本文档提供了New API支持的所有环境变量及其配置说明。您可以通过设置这些环境变量来自定义系统的行为。
 
 <Callout type="info" title="提示">
-  New API 支持从 `.env` 文件中读取环境变量，请参照 `.env.example`
+  TokenFactory 支持从 `.env` 文件中读取环境变量，请参照 `.env.example`
   文件，使用时请将其重命名为 `.env`。
 </Callout>
 
@@ -21,12 +21,12 @@ title: 环境变量配置指南
 
 | 环境变量                | 说明                       | 默认值                   | 示例                                                                                                                             |
 | ----------------------- | -------------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| `SQL_DSN`               | 数据库连接字符串           | SQLite (`one-api.db`) | MySQL: `SQL_DSN=root:123456@tcp(localhost:3306)/new-api` \| PostgreSQL: `SQL_DSN=postgresql://root:123456@postgres:5432/new-api` |
+| `SQL_DSN`               | 数据库连接字符串           | SQLite (`one-api.db`) | MySQL: `SQL_DSN=root:123456@tcp(localhost:3306)/token-factory` \| PostgreSQL: `SQL_DSN=postgresql://root:123456@postgres:5432/token-factory` |
 | `SQL_MAX_IDLE_CONNS`    | 空闲连接池最大连接数       | `100`                    | `SQL_MAX_IDLE_CONNS=50`                                                                                                          |
 | `SQL_MAX_OPEN_CONNS`    | 连接池最大打开连接数       | `1000`                   | `SQL_MAX_OPEN_CONNS=500`                                                                                                         |
 | `SQL_MAX_LIFETIME`      | 连接最大生命周期(秒)       | `60`                     | `SQL_MAX_LIFETIME=120`                                                                                                          |
 | `LOG_SQL_DSN`           | 日志表独立数据库连接字符串 | -                        | `LOG_SQL_DSN=root:123456@tcp(localhost:3306)/oneapi_logs`                                                                        |
-| `SQLITE_PATH`           | SQLite数据库路径           | `one-api.db`             | `SQLITE_PATH=/var/lib/new-api/new-api.db`                                                                                        |
+| `SQLITE_PATH`           | SQLite数据库路径           | `one-api.db`             | `SQLITE_PATH=/var/lib/token-factory/token-factory.db`                                                                                        |
 
 ## 缓存配置
 
@@ -191,10 +191,10 @@ title: 环境变量配置指南
 | 环境变量 | 说明 | 默认值 | 示例 |
 |---------|------|-------|------|
 | `PYROSCOPE_URL` | Pyroscope服务器地址，留空禁用 | - | `PYROSCOPE_URL=http://pyroscope:4040` |
-| `PYROSCOPE_APP_NAME` | 上报的应用名称 | `new-api` | `PYROSCOPE_APP_NAME=my-api` |
+| `PYROSCOPE_APP_NAME` | 上报的应用名称 | `token-factory` | `PYROSCOPE_APP_NAME=my-api` |
 | `PYROSCOPE_BASIC_AUTH_USER` | Pyroscope Basic Auth用户名 | - | `PYROSCOPE_BASIC_AUTH_USER=admin` |
 | `PYROSCOPE_BASIC_AUTH_PASSWORD` | Pyroscope Basic Auth密码 | - | `PYROSCOPE_BASIC_AUTH_PASSWORD=secret` |
-| `HOSTNAME` | 上报的主机名标签 | `new-api` | `HOSTNAME=node-1` |
+| `HOSTNAME` | 上报的主机名标签 | `token-factory` | `HOSTNAME=node-1` |
 | `PYROSCOPE_MUTEX_RATE` | 互斥锁分析采样率 | `5` | `PYROSCOPE_MUTEX_RATE=10` |
 | `PYROSCOPE_BLOCK_RATE` | 阻塞分析采样率 | `5` | `PYROSCOPE_BLOCK_RATE=10` |
 
@@ -276,8 +276,8 @@ SYNC_FREQUENCY=60
 
 ```yaml
 services:
-  new-api:
-    image: calciumion/new-api:latest
+  token-factory:
+    image: calciumion/token-factory:latest
     environment:
       - TZ=Asia/Shanghai
       - SQL_DSN=root:123456@tcp(mysql:3306)/oneapi

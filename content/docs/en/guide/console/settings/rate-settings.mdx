@@ -14,7 +14,7 @@ NewAPI uses a three-tier ratio system to calculate user quota consumption:
 
 ### Relationship Between Quota and Ratios
 
-In the New API system, ratios are key parameters for calculating quota consumption. Quota is an internal billing unit of the system, and all API calls are ultimately converted into quota points for deduction.
+In the TokenFactory system, ratios are key parameters for calculating quota consumption. Quota is an internal billing unit of the system, and all API calls are ultimately converted into quota points for deduction.
 
 ### Quota Unit Conversion:
 
@@ -44,7 +44,7 @@ In the New API system, ratios are key parameters for calculating quota consumpti
 
 #### Pre-consumption and Post-consumption Mechanism
 
-New API adopts a dual billing mechanism of pre-consumption and post-consumption:
+TokenFactory adopts a dual billing mechanism of pre-consumption and post-consumption:
 
 1.  **Pre-consumption phase**: Before an API call, quota consumption is calculated based on estimated token count and pre-deducted.
 2.  **Post-consumption phase**: After an API call is completed, quota consumption is recalculated based on the actual token count.

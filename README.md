@@ -1,6 +1,6 @@
-# new-api-docs-v1
+# token-factory-docs
 
-A Next.js documentation site for New API.
+A Next.js documentation site for TokenFactory.
 
 ## Development
 

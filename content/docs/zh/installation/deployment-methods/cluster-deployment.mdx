@@ -2,7 +2,7 @@
 title: 集群部署
 ---
 
-本文档提供了 New API 集群部署的详细配置步骤和最佳实践，帮助您构建高可用、负载均衡的分布式系统。
+本文档提供了 TokenFactory 集群部署的详细配置步骤和最佳实践，帮助您构建高可用、负载均衡的分布式系统。
 
 ## 前置要求
 
@@ -14,7 +14,7 @@ title: 集群部署
 
 ## 集群架构概述
 
-New API 集群采用主从架构设计：
+TokenFactory 集群采用主从架构设计：
 
 1. **主节点**：负责处理所有写操作和部分读操作
 2. **从节点**：主要负责处理读操作，提高系统整体吞吐量
@@ -59,14 +59,14 @@ New API 集群采用主从架构设计：
 
 ```yaml
 services:
-  new-api-master:
-    image: calciumion/new-api:latest
-    container_name: new-api-master
+  token-factory-master:
+    image: calciumion/token-factory:latest
+    container_name: token-factory-master
     restart: always
     ports:
       - '3000:3000'
     environment:
-      - SQL_DSN=root:password@tcp(your-db-host:3306)/new-api
+      - SQL_DSN=root:password@tcp(your-db-host:3306)/token-factory
       - REDIS_CONN_STRING=redis://default:password@your-redis-host:6379
       - SESSION_SECRET=your_unique_session_secret
       - CRYPTO_SECRET=your_unique_crypto_secret
@@ -95,14 +95,14 @@ docker compose up -d
 
 ```yaml
 services:
-  new-api-slave:
-    image: calciumion/new-api:latest
-    container_name: new-api-slave
+  token-factory-slave:
+    image: calciumion/token-factory:latest
+    container_name: token-factory-slave
     restart: always
     ports:
       - '3000:3000' # 可以与主节点使用相同端口，因为它们在不同服务器上
     environment:
-      - SQL_DSN=root:password@tcp(your-db-host:3306)/new-api # 与主节点相同
+      - SQL_DSN=root:password@tcp(your-db-host:3306)/token-factory # 与主节点相同
       - REDIS_CONN_STRING=redis://default:password@your-redis-host:6379 # 与主节点相同
       - SESSION_SECRET=your_unique_session_secret # 必须与主节点相同
       - CRYPTO_SECRET=your_unique_crypto_secret # 必须与主节点相同

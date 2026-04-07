@@ -24,7 +24,7 @@ const contentMap: Record<
 > = {
   en: {
     badge: 'The Foundation of Your AI Universe',
-    title: 'Connect all AI providers, manage your AI assets,',
+    title: 'Unified input for large language models',
     subtitle: 'build the',
     highlight: 'future',
     getStarted: 'Getting Started',
@@ -38,7 +38,7 @@ const contentMap: Record<
   },
   zh: {
     badge: '人工智能应用基座',
-    title: '承载 AI 应用，管理数字资产，',
+    title: '大语言模型的统一入口',
     subtitle: '连接',
     highlight: '未来',
     getStarted: '快速开始',
@@ -118,41 +118,43 @@ export default async function Page({
 
   return (
     <main className="text-landing-foreground dark:text-landing-foreground-dark pt-4 pb-6 md:pb-12">
-      <div className="relative mx-auto flex h-[70vh] max-h-[900px] min-h-[600px] w-full max-w-[1400px] overflow-hidden rounded-2xl border bg-origin-border">
-        <Hero />
-        <div className="z-2 flex size-full flex-col px-4 max-md:items-center max-md:text-center md:p-12">
-          <p className="border-brand/50 text-brand mt-12 w-fit rounded-full border p-2 text-xs font-medium">
-            {content.badge}
-          </p>
-          <h1 className="leading-tighter my-8 text-4xl font-medium xl:mb-12 xl:text-5xl">
-            {content.title}
-            <br />
-            {content.subtitle}{' '}
-            <span className="text-brand">{content.highlight}</span>.
-          </h1>
-          <div className="flex w-fit flex-row flex-wrap items-center justify-center gap-4">
-            <Link
-              href={getLocalePath(lang, 'docs')}
-              className="bg-brand text-brand-foreground hover:bg-brand-200 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 font-medium tracking-tight transition-colors max-sm:text-sm"
-            >
-              <BookOpen className="size-4" />
-              {content.getStarted}
-            </Link>
-            <a
-              href="https://github.com/QuantumNous/new-api"
-              target="_blank"
-              rel="noreferrer noopener"
-              className="bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 font-medium tracking-tight transition-colors max-sm:text-sm"
-            >
-              <Github className="size-4" />
-              {content.github}
-            </a>
+      <div className="home-banner-bg w-full min-h-[400px] md:min-h-[500px] flex items-center justify-center">
+        <div className="flex items-center justify-center h-full px-4 py-16 md:py-20">
+          <div className="flex flex-col items-center justify-center text-center max-w-3xl mx-auto">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-medium leading-tight mb-4">
+              {content.title}
+              {/* <br />
+              {content.subtitle}{' '}
+              <span className="text-brand">{content.highlight}</span>. */}
+            </h1>
+            {/* <p className="text-sm md:text-base mb-8 opacity-80">
+              {content.badge}
+            </p> */}
+            
+            <div className="flex flex-row gap-3 justify-center items-center">
+              <Link
+                href={getLocalePath(lang, 'docs')}
+                className="bg-brand text-brand-foreground hover:bg-brand-200 inline-flex items-center justify-center gap-2 rounded-md px-8 py-3 font-medium transition-colors max-sm:text-sm"
+              >
+                <BookOpen className="size-4" />
+                {content.getStarted}
+              </Link>
+              <a
+                href="https://github.com/fyinfor/token-factory"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent inline-flex items-center justify-center gap-2 rounded-md border px-8 py-3 font-medium transition-colors max-sm:text-sm"
+              >
+                <Github className="size-4" />
+                {content.github}
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Partners Section */}
-      <section className="mx-auto mt-12 max-w-[1400px] px-4 text-center">
+      {/* <section className="mx-auto mt-12 max-w-[1400px] px-4 text-center">
         <h2 className="text-2xl font-semibold md:text-3xl">
           {content.partnersTitle}
         </h2>
@@ -180,10 +182,10 @@ export default async function Page({
             </a>
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Sponsor Partners Section */}
-      <section className="mx-auto mt-16 max-w-[1400px] px-4 text-center">
+      {/* <section className="mx-auto mt-16 max-w-[1400px] px-4 text-center">
         <h2 className="text-2xl font-semibold md:text-3xl">
           {content.sponsorPartnersTitle}
         </h2>
@@ -217,21 +219,21 @@ export default async function Page({
             </a>
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Development Contributors Section */}
-      <section className="mx-auto mt-16 max-w-[1400px] px-4 text-center">
+      {/* <section className="mx-auto mt-16 max-w-[1400px] px-4 text-center">
         <h2 className="text-2xl font-semibold md:text-3xl">
           {content.devContributorsTitle}
         </h2>
         <div className="mt-8 flex justify-center">
           <a
-            href="https://github.com/QuantumNous/new-api/graphs/contributors"
+            href="https://github.com/fyinfor/token-factory/graphs/contributors"
             target="_blank"
             rel="noopener noreferrer"
           >
             <img
-              src="https://contrib.rocks/image?repo=QuantumNous/new-api"
+              src="https://contrib.rocks/image?repo=fyinfor/token-factory"
               alt="Development Contributors"
               loading="lazy"
               decoding="async"
@@ -239,21 +241,21 @@ export default async function Page({
             />
           </a>
         </div>
-      </section>
+      </section> */}
 
       {/* Documentation Contributors Section */}
-      <section className="mx-auto mt-16 max-w-[1400px] px-4 text-center">
+      {/* <section className="mx-auto mt-16 max-w-[1400px] px-4 text-center">
         <h2 className="text-2xl font-semibold md:text-3xl">
           {content.docsContributorsTitle}
         </h2>
         <div className="mt-8 flex justify-center">
           <a
-            href="https://github.com/QuantumNous/new-api-docs-v1/graphs/contributors"
+            href="https://github.com/fyinfor/token-factory-docs/graphs/contributors"
             target="_blank"
             rel="noopener noreferrer"
           >
             <img
-              src="https://contrib.rocks/image?repo=QuantumNous/new-api-docs-v1"
+              src="https://contrib.rocks/image?repo=fyinfor/token-factory-docs"
               alt="Documentation Contributors"
               loading="lazy"
               decoding="async"
@@ -261,7 +263,7 @@ export default async function Page({
             />
           </a>
         </div>
-      </section>
+      </section> */}
 
       <AntifraudDialog lang={lang} />
     </main>

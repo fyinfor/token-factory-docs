@@ -4,7 +4,7 @@ title: 分析ツール設定ガイド
 
 ### 概要
 
-New API は現在、一般的な分析プラットフォームとの統合をサポートしており、ユーザー行動とウェブサイトのパフォーマンスを追跡するのに役立ちます。
+TokenFactory は現在、一般的な分析プラットフォームとの統合をサポートしており、ユーザー行動とウェブサイトのパフォーマンスを追跡するのに役立ちます。
 
 - **Google Analytics 4 (GA4)**：Googleの分析プラットフォームの最新バージョン
 - **Umami Analytics**：プライバシーを重視したオープンソースの分析ツール
@@ -56,7 +56,7 @@ export GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 docker run -d \
   -e GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX \
   ...その他のオプション...
-  calciumion/new-api:latest
+  calciumion/token-factory:latest
 ```
 
 #### 3. アプリケーションの再起動
@@ -159,7 +159,7 @@ environment:
 
 ```bash
 # 環境変数が設定されているか確認
-docker exec new-api env | grep -E "GOOGLE_ANALYTICS|UMAMI"
+docker exec token-factory env | grep -E "GOOGLE_ANALYTICS|UMAMI"
 ```
 
 ---

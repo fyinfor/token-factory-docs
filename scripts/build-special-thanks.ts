@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // Configuration
-const SOURCE_REPO = process.env.SOURCE_REPO || 'QuantumNous/new-api';
+const SOURCE_REPO = process.env.SOURCE_REPO || 'fyinfor/token-factory';
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
 const AFDIAN_USER_ID = process.env.AFDIAN_USER_ID || '';
 const AFDIAN_TOKEN = process.env.AFDIAN_TOKEN || '';
@@ -57,13 +57,13 @@ const SPECIAL_THANKS_I18N = {
   zh: {
     title: '# 🙏 特别鸣谢',
     intro:
-      'New API 的开发离不开社区的支持和贡献。在此特别感谢所有为项目提供帮助的个人和组织。',
+      'TokenFactory 的开发离不开社区的支持和贡献。在此特别感谢所有为项目提供帮助的个人和组织。',
     sponsorsTitle: '## ❤️ 赞助商',
     sponsorsIntro:
       '以下是所有为项目提供资金支持的赞助商。感谢他们的慷慨捐助，让项目能够持续发展！',
     sponsorsInfoTitle: '赞助商信息 · 数据更新于',
     sponsorsInfoDesc:
-      '以下赞助商数据从爱发电平台自动获取。根据累计赞助金额，分为金牌、银牌和铜牌三个等级。如果您也想为项目提供资金支持，欢迎前往 [爱发电](https://afdian.com/a/new-api) 平台进行捐赠。',
+      '以下赞助商数据从爱发电平台自动获取。根据累计赞助金额，分为金牌、银牌和铜牌三个等级。如果您也想为项目提供资金支持，欢迎前往 [爱发电](https://afdian.com/a/token-factory) 平台进行捐赠。',
     contributorsTitle: '## 👨‍💻 开发贡献者',
     contributorsIntro:
       '以下是所有为项目做出贡献的开发者列表。在此感谢他们的辛勤工作和创意！',
@@ -84,13 +84,13 @@ const SPECIAL_THANKS_I18N = {
   en: {
     title: '# 🙏 Special Thanks',
     intro:
-      'The development of New API would not be possible without the support and contributions of the community. We would like to express our special gratitude to all individuals and organizations who have helped with this project.',
+      'The development of TokenFactory would not be possible without the support and contributions of the community. We would like to express our special gratitude to all individuals and organizations who have helped with this project.',
     sponsorsTitle: '## ❤️ Sponsors',
     sponsorsIntro:
       'Below are all the sponsors who have provided financial support for the project. Thank you for their generous donations that allow the project to continue developing!',
     sponsorsInfoTitle: 'Sponsor Information · Data updated at',
     sponsorsInfoDesc:
-      'The following sponsor data is automatically retrieved from the Afdian platform. Based on the cumulative sponsorship amount, they are divided into three levels: Gold, Silver, and Bronze. If you would also like to provide financial support for the project, you are welcome to make a donation on the [Afdian](https://afdian.com/a/new-api) platform.',
+      'The following sponsor data is automatically retrieved from the Afdian platform. Based on the cumulative sponsorship amount, they are divided into three levels: Gold, Silver, and Bronze. If you would also like to provide financial support for the project, you are welcome to make a donation on the [Afdian](https://afdian.com/a/token-factory) platform.',
     contributorsTitle: '## 👨‍💻 Developer Contributors',
     contributorsIntro:
       'Below is a list of all developers who have contributed to the project. We thank them for their hard work and creativity!',
@@ -113,13 +113,13 @@ const SPECIAL_THANKS_I18N = {
   ja: {
     title: '# 🙏 スペシャルサンクス',
     intro:
-      'New API の開発は、コミュニティのサポートと貢献なしには実現できませんでした。プロジェクトに協力してくださったすべての個人と組織に特別な感謝を申し上げます。',
+      'TokenFactory の開発は、コミュニティのサポートと貢献なしには実現できませんでした。プロジェクトに協力してくださったすべての個人と組織に特別な感謝を申し上げます。',
     sponsorsTitle: '## ❤️ スポンサー',
     sponsorsIntro:
       '以下は、プロジェクトに財政的支援を提供してくださったすべてのスポンサーです。プロジェクトが継続的に発展できるよう、寛大な寄付をしてくださったことに感謝します！',
     sponsorsInfoTitle: 'スポンサー情報 · データ更新日時',
     sponsorsInfoDesc:
-      '以下のスポンサーデータは、Afdian プラットフォームから自動的に取得されます。累計スポンサー金額に基づいて、ゴールド、シルバー、ブロンズの3つのレベルに分類されます。プロジェクトに財政的支援を提供したい場合は、[Afdian](https://afdian.com/a/new-api) プラットフォームで寄付を歓迎します。',
+      '以下のスポンサーデータは、Afdian プラットフォームから自動的に取得されます。累計スポンサー金額に基づいて、ゴールド、シルバー、ブロンズの3つのレベルに分類されます。プロジェクトに財政的支援を提供したい場合は、[Afdian](https://afdian.com/a/token-factory) プラットフォームで寄付を歓迎します。',
     contributorsTitle: '## 👨‍💻 開発貢献者',
     contributorsIntro:
       '以下は、プロジェクトに貢献してくださったすべての開発者のリストです。彼らの勤勉な作業と創造性に感謝します！',

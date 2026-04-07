@@ -61,7 +61,7 @@ title: 支付设置
 - type: 通道标识，用于后端路由与下单。
   - `stripe` → 走 Stripe 网关。
   - 其他（如 `alipay`、`wxpay`、`custom1` 等）→ 走易支付风格网关，并将该值作为渠道参数透传。
-  - 详细逻辑见后端控制器 `controller/topup.go`（参考: [controller/topup.go](https://github.com/QuantumNous/new-api/blob/main/controller/topup.go)）。
+  - 详细逻辑见后端控制器 `controller/topup.go`（参考: [controller/topup.go](https://github.com/fyinfor/token-factory/blob/main/controller/topup.go)）。
 - min_topup: 最低充值金额（单位与页面货币一致）。当输入金额小于该值时，页面会提示"此支付方式最低充值金额为 X"，并限制发起支付；后端也会进行校验。
 - 排序: 按数组顺序从左到右渲染。
 
@@ -92,4 +92,4 @@ title: 支付设置
 - 键：充值金额（字符串格式）
 - 值：折扣率（0-1之间的小数，如 0.95 表示 95% 价格，即 5% 折扣）
 - 系统会根据配置自动计算实付金额和节省金额
-- 详细实现逻辑见后端控制器 [controller/topup.go](https://github.com/QuantumNous/new-api/blob/main/controller/topup.go)
+- 详细实现逻辑见后端控制器 [controller/topup.go](https://github.com/fyinfor/token-factory/blob/main/controller/topup.go)

@@ -4,7 +4,7 @@ title: 性能分析设置指南
 
 ### 概述
 
-New API 提供两类性能分析能力：
+TokenFactory 提供两类性能分析能力：
 
 - **pprof（内置）**：适合临时诊断与离线分析
 - **Pyroscope（可选）**：适合线上持续分析与火焰图可视化
@@ -60,7 +60,7 @@ export ENABLE_PPROF=true
 ```yaml
 environment:
   - PYROSCOPE_URL=http://localhost:4040
-  - PYROSCOPE_APP_NAME=new-api
+  - PYROSCOPE_APP_NAME=token-factory
   - PYROSCOPE_BASIC_AUTH_USER=your-user
   - PYROSCOPE_BASIC_AUTH_PASSWORD=your-password
   - PYROSCOPE_MUTEX_RATE=5
@@ -72,7 +72,7 @@ environment:
 
 ```bash
 export PYROSCOPE_URL=http://localhost:4040
-export PYROSCOPE_APP_NAME=new-api
+export PYROSCOPE_APP_NAME=token-factory
 export PYROSCOPE_BASIC_AUTH_USER=your-user
 export PYROSCOPE_BASIC_AUTH_PASSWORD=your-password
 export PYROSCOPE_MUTEX_RATE=5
@@ -105,7 +105,7 @@ export HOSTNAME=your-hostname
 
 ```bash
 # Check env vars
-docker exec new-api env | grep -E "PPROF|PYROSCOPE"
+docker exec token-factory env | grep -E "PPROF|PYROSCOPE"
 ```
 
 ---

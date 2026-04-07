@@ -6,7 +6,7 @@ import type { LinkItemType } from 'fumadocs-ui/layouts/docs';
 export const linkItems: LinkItemType[] = [
   {
     type: 'icon',
-    url: 'https://github.com/QuantumNous/new-api',
+    url: 'https://github.com/fyinfor/token-factory',
     label: 'GitHub',
     text: 'GitHub',
     icon: (
@@ -21,32 +21,32 @@ export const linkItems: LinkItemType[] = [
     ),
     external: true,
   },
-  {
-    type: 'icon',
-    url: 'https://atomgit.com/QuantumNous/new-api',
-    label: 'AtomGit',
-    text: 'AtomGit',
-    icon: (
-      <svg
-        role="img"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        className="size-5"
-      >
-        <path
-          fillRule="evenodd"
-          d="M15.5,5c.1,0,.3-.2.5-.3,0,.1,0,.2,0,.3,0,.1,0,.3,0,.4,0,1,.6,1.8,1.4,2,1.1.3,2.1-.2,2.7-1.1.7-1.1.4-2.4-.8-3.3C16.2.8,12.8.2,9.1,1.2,1.1,3.6-1.6,13.4,4,19.4c2.4,2.6,5.5,3.7,9,3.6,4.5-.1,7.7-2.3,9.7-6.2,1.5-2.7-.1-5.7-3.2-6.4-1.7-.3-3.5-.5-5.3-.3-.6,0-1.2.2-1.7.5-.6.3-.7.9-.7,1.5,0,.6.5.9,1,1,1,.2,2.1.3,3.1.3.3,0,.6,0,.9,0,.4,0,.9,0,1.3,0,1.2.2,1.6,1.2,1,2.3-.2.3-.3.5-.5.7-.8.9-1.9,1.5-3.1,1.8-2.2.5-4.3.6-6.5-.1-2.5-.8-3.9-2.6-4-5,0-1.5.4-3,1.1-4.3.3-.6.5-1.2.5-1.9,0-.3,0-.6,0-.9,0-.2,0-.3,0-.5.2,0,.5.1.7.2.9.4,1.9.5,2.9.3.6-.1,1.2-.2,1.8-.1,1,0,1.9-.2,2.7-.7.2-.1.4-.2.6-.4Z"
-        />
-      </svg>
-    ),
-    external: true,
-  },
+  // {
+  //   type: 'icon',
+  //   url: 'https://atomgit.com/fyinfor/token-factory',
+  //   label: 'AtomGit',
+  //   text: 'AtomGit',
+  //   icon: (
+  //     <svg
+  //       role="img"
+  //       viewBox="0 0 24 24"
+  //       fill="currentColor"
+  //       className="size-5"
+  //     >
+  //       <path
+  //         fillRule="evenodd"
+  //         d="M15.5,5c.1,0,.3-.2.5-.3,0,.1,0,.2,0,.3,0,.1,0,.3,0,.4,0,1,.6,1.8,1.4,2,1.1.3,2.1-.2,2.7-1.1.7-1.1.4-2.4-.8-3.3C16.2.8,12.8.2,9.1,1.2,1.1,3.6-1.6,13.4,4,19.4c2.4,2.6,5.5,3.7,9,3.6,4.5-.1,7.7-2.3,9.7-6.2,1.5-2.7-.1-5.7-3.2-6.4-1.7-.3-3.5-.5-5.3-.3-.6,0-1.2.2-1.7.5-.6.3-.7.9-.7,1.5,0,.6.5.9,1,1,1,.2,2.1.3,3.1.3.3,0,.6,0,.9,0,.4,0,.9,0,1.3,0,1.2.2,1.6,1.2,1,2.3-.2.3-.3.5-.5.7-.8.9-1.9,1.5-3.1,1.8-2.2.5-4.3.6-6.5-.1-2.5-.8-3.9-2.6-4-5,0-1.5.4-3,1.1-4.3.3-.6.5-1.2.5-1.9,0-.3,0-.6,0-.9,0-.2,0-.3,0-.5.2,0,.5.1.7.2.9.4,1.9.5,2.9.3.6-.1,1.2-.2,1.8-.1,1,0,1.9-.2,2.7-.7.2-.1.4-.2.6-.4Z"
+  //       />
+  //     </svg>
+  //   ),
+  //   external: true,
+  // },
 ];
 
 export const logo = (
   <Image
-    alt="New API"
-    src="/assets/newapi.svg"
+    alt="TokenFactory"
+    src="/assets/logo.png"
     width={20}
     height={20}
     className="size-5"
@@ -63,7 +63,7 @@ export function baseOptions(locale: string): BaseLayoutProps {
         <>
           {logo}
           <span className="font-medium in-[header]:text-[15px] [.uwu_&]:hidden">
-            New API
+            TokenFactory
           </span>
         </>
       ),

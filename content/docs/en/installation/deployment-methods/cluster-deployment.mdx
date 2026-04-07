@@ -2,7 +2,7 @@
 title: Cluster Deployment
 ---
 
-This document provides detailed configuration steps and best practices for New API cluster deployment, helping you build a highly available, load-balanced distributed system.
+This document provides detailed configuration steps and best practices for TokenFactory cluster deployment, helping you build a highly available, load-balanced distributed system.
 
 ## Prerequisites
 
@@ -14,7 +14,7 @@ This document provides detailed configuration steps and best practices for New A
 
 ## Cluster Architecture Overview
 
-The New API cluster adopts a master-slave architecture design:
+The TokenFactory cluster adopts a master-slave architecture design:
 
 1.  **Master Node**: Responsible for handling all write operations and some read operations
 2.  **Slave Nodes**: Primarily responsible for handling read operations, improving overall system throughput
@@ -60,14 +60,14 @@ Create a `docker-compose.yml` file on the master node server:
 
 ```yaml
 services:
-  new-api-master:
-    image: calciumion/new-api:latest
-    container_name: new-api-master
+  token-factory-master:
+    image: calciumion/token-factory:latest
+    container_name: token-factory-master
     restart: always
     ports:
       - '3000:3000'
     environment:
-      - SQL_DSN=root:password@tcp(your-db-host:3306)/new-api
+      - SQL_DSN=root:password@tcp(your-db-host:3306)/token-factory
       - REDIS_CONN_STRING=redis://default:password@your-redis-host:6379
       - SESSION_SECRET=your_unique_session_secret
       - CRYPTO_SECRET=your_unique_crypto_secret
@@ -97,14 +97,14 @@ Create a `docker-compose.yml` file on each slave node server:
 
 ```yaml
 services:
-  new-api-slave:
-    image: calciumion/new-api:latest
-    container_name: new-api-slave
+  token-factory-slave:
+    image: calciumion/token-factory:latest
+    container_name: token-factory-slave
     restart: always
     ports:
       - '3000:3000' # 可以与主节点使用相同端口，因为它们在不同服务器上
     environment:
-      - SQL_DSN=root:password@tcp(your-db-host:3306)/new-api # 与主节点相同
+      - SQL_DSN=root:password@tcp(your-db-host:3306)/token-factory # 与主节点相同
       - REDIS_CONN_STRING=redis://default:password@your-redis-host:6379 # 与主节点相同
       - SESSION_SECRET=your_unique_session_secret # 必须与主节点相同
       - CRYPTO_SECRET=your_unique_crypto_secret # 必须与主节点相同

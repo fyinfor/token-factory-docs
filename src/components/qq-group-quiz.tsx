@@ -11,7 +11,7 @@ const translations = {
     questions: [
       {
         id: 'q1',
-        question: '1. What is New API?',
+        question: '1. What is TokenFactory?',
         options: [
           { value: 'a', label: 'A commercial API sales platform' },
           {
@@ -24,7 +24,7 @@ const translations = {
         ],
         correct: 'b',
         errorMessage:
-          'Please re-read the project introduction. New API is an open-source AI interface management and distribution system.',
+          'Please re-read the project introduction. TokenFactory is an open-source AI interface management and distribution system.',
       },
       {
         id: 'q2',
@@ -40,7 +40,7 @@ const translations = {
       },
       {
         id: 'q3',
-        question: '3. Does New API have a closed-source paid version?',
+        question: '3. Does TokenFactory have a closed-source paid version?',
         options: [
           {
             value: 'true',
@@ -49,12 +49,12 @@ const translations = {
           {
             value: 'false',
             label:
-              'No, New API is open-source software, but a commercial license is required in certain scenarios',
+              'No, TokenFactory is open-source software, but a commercial license is required in certain scenarios',
           },
         ],
         correct: 'false',
         errorMessage:
-          'According to Group Rule 4: New API is open-source software, but a commercial license is required in certain scenarios. For details, please see the Project Introduction.',
+          'According to Group Rule 4: TokenFactory is open-source software, but a commercial license is required in certain scenarios. For details, please see the Project Introduction.',
       },
       {
         id: 'q4',
@@ -105,7 +105,7 @@ const translations = {
     questions: [
       {
         id: 'q1',
-        question: '1. New API 是什么？',
+        question: '1. TokenFactory 是什么？',
         options: [
           { value: 'a', label: '一个商业API销售平台' },
           { value: 'b', label: '一个开源的AI接口管理和分发系统' },
@@ -114,7 +114,7 @@ const translations = {
         ],
         correct: 'b',
         errorMessage:
-          '请重新阅读项目介绍。New API 是一个开源的AI接口管理和分发系统。',
+          '请重新阅读项目介绍。TokenFactory 是一个开源的AI接口管理和分发系统。',
       },
       {
         id: 'q2',
@@ -129,17 +129,17 @@ const translations = {
       },
       {
         id: 'q3',
-        question: '3. New API 是否有闭源的付费版本？',
+        question: '3. TokenFactory 是否有闭源的付费版本？',
         options: [
           { value: 'true', label: '有，存在付费的闭源版本' },
           {
             value: 'false',
-            label: '没有，New API 采用 AGPLv3 开源协议，遵守协议即可免费使用',
+            label: '没有，TokenFactory 采用 AGPLv3 开源协议，遵守协议即可免费使用',
           },
         ],
         correct: 'false',
         errorMessage:
-          '根据群规第4条：New API 采用 GNU AGPLv3 开源协议，只要遵守开源协议即可免费使用。',
+          '根据群规第4条：TokenFactory 采用 GNU AGPLv3 开源协议，只要遵守开源协议即可免费使用。',
       },
       {
         id: 'q4',

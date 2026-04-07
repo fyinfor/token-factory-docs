@@ -4,7 +4,7 @@ title: Analytics Tool Setup Guide
 
 ### Overview
 
-New API now supports integration with popular analytics platforms to help you track user behavior and website performance:
+TokenFactory now supports integration with popular analytics platforms to help you track user behavior and website performance:
 
 - **Google Analytics 4 (GA4)**: The latest version of Google's analytics platform
 - **Umami Analytics**: A privacy-focused, open-source analytics tool
@@ -56,7 +56,7 @@ export GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 docker run -d \
   -e GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX \
   ...其他选项...
-  calciumion/new-api:latest
+  calciumion/token-factory:latest
 ```
 
 #### 3. Restart the Application
@@ -159,7 +159,7 @@ You can also view the page source code and look for the injected scripts in the 
 
 ```bash
 # Check if environment variables are set
-docker exec new-api env | grep -E "GOOGLE_ANALYTICS|UMAMI"
+docker exec token-factory env | grep -E "GOOGLE_ANALYTICS|UMAMI"
 ```
 
 ---

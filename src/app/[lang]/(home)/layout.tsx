@@ -42,7 +42,7 @@ const i18nText: Record<
     skills: { text: 'Skills', desc: '' },
     start: {
       text: 'Getting Started',
-      desc: 'Learn how to deploy and configure New API.',
+      desc: 'Learn how to deploy and configure TokenFactory.',
     },
     install: {
       text: 'Installation',
@@ -72,7 +72,7 @@ const i18nText: Record<
     title: { text: 'ドキュメント', desc: '' },
     apiDocs: { text: 'Apifox プレイグラウンド', desc: '' },
     skills: { text: 'Skills', desc: '' },
-    start: { text: 'はじめに', desc: 'New API のデプロイと設定方法を学ぶ。' },
+    start: { text: 'はじめに', desc: 'TokenFactory のデプロイと設定方法を学ぶ。' },
     install: {
       text: 'インストール',
       desc: '様々なデプロイ方法とインストールガイド。',
@@ -159,14 +159,14 @@ export default async function Layout({
             url: `${docsUrl}/skills`,
             icon: <Puzzle />,
           },
-          {
-            type: 'main',
-            on: 'menu',
-            text: texts.apiDocs.text,
-            url: 'https://apifox.newapi.ai/',
-            icon: <FileCode />,
-            external: true,
-          },
+          // {
+          //   type: 'main',
+          //   on: 'menu',
+          //   text: texts.apiDocs.text,
+          //   url: 'https://apifox.newapi.ai/',
+          //   icon: <FileCode />,
+          //   external: true,
+          // },
           // Desktop navigation
           {
             type: 'custom',
@@ -228,13 +228,13 @@ export default async function Layout({
               </Link>
             ),
           },
-          {
-            type: 'main',
-            on: 'nav',
-            text: texts.apiDocs.text,
-            url: 'https://apifox.newapi.ai/',
-            external: true,
-          },
+          // {
+          //   type: 'main',
+          //   on: 'nav',
+          //   text: texts.apiDocs.text,
+          //   url: 'https://apifox.newapi.ai/',
+          //   external: true,
+          // },
           ...linkItems,
         ]}
         className="flex-1 dark:bg-neutral-950 dark:[--color-fd-background:var(--color-neutral-950)]"

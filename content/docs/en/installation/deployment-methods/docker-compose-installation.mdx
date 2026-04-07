@@ -2,7 +2,7 @@
 title: Docker Compose Deployment
 ---
 
-This document provides detailed steps for deploying New API using Docker Compose.
+This document provides detailed steps for deploying TokenFactory using Docker Compose.
 
 ## Prerequisites
 
@@ -17,10 +17,10 @@ If you have normal access to GitHub, this method is recommended. The project alr
 
 ```shell
 # Download project source code
-git clone https://github.com/QuantumNous/new-api.git
+git clone https://github.com/fyinfor/token-factory.git
 
 # Enter project directory
-cd new-api
+cd token-factory
 
 # Edit docker-compose.yml file as needed
 # Use nano editor
@@ -40,11 +40,11 @@ nano docker-compose.yml
 
 If you cannot access GitHub or clone the repository, you can manually create the configuration file:
 
-1. Create a directory for New API deployment:
+1. Create a directory for TokenFactory deployment:
 
 ```shell
-mkdir new-api
-cd new-api
+mkdir token-factory
+cd token-factory
 ```
 
 2. Create the `docker-compose.yml` file in this directory
@@ -84,10 +84,10 @@ This command will automatically pull the required images and start the services 
 docker compose logs -f
 ```
 
-- **Logs for a specific service** (Examples: `new-api`, `mysql`, `redis`)
+- **Logs for a specific service** (Examples: `token-factory`, `mysql`, `redis`)
 
 ```bash
-docker compose logs -f new-api
+docker compose logs -f token-factory
 docker compose logs -f mysql
 docker compose logs -f redis
 ```
@@ -95,19 +95,19 @@ docker compose logs -f redis
 - **View only the last N lines**
 
 ```bash
-docker compose logs --tail=100 new-api
+docker compose logs --tail=100 token-factory
 ```
 
 - **View logs from a recent period**
 
 ```bash
-docker compose logs --since=10m new-api
+docker compose logs --since=10m token-factory
 ```
 
 - **Show timestamps**
 
 ```bash
-docker compose logs -f -t new-api
+docker compose logs -f -t token-factory
 ```
 
 - **Foreground mode debugging (real-time log output with startup)**
@@ -115,7 +115,7 @@ docker compose logs -f -t new-api
 ```bash
 docker compose up
 # Or only start and follow a specific service
-docker compose up new-api
+docker compose up token-factory
 ```
 
 Press Ctrl+C to exit foreground mode (this will stop the corresponding service). For background operation, use `-d`.
@@ -126,10 +126,10 @@ Press Ctrl+C to exit foreground mode (this will stop the corresponding service).
 docker compose ps
 ```
 
-- **View logs using container name** (when `container_name` is set, e.g., `new-api` in the configuration)
+- **View logs using container name** (when `container_name` is set, e.g., `token-factory` in the configuration)
 
 ```bash
-docker logs -f new-api
+docker logs -f token-factory
 ```
 
 ## Stop Services

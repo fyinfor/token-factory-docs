@@ -39,22 +39,22 @@ const ProductHuntIcon = (
 const socialLinks: { name: string; href: string; icon: React.ReactNode }[] = [
   {
     name: 'GitHub',
-    href: 'https://github.com/QuantumNous/new-api',
+    href: 'https://github.com/fyinfor/token-factory',
     icon: <Github className="size-4" />,
   },
   {
     name: 'AtomGit',
-    href: 'https://atomgit.com/QuantumNous/new-api',
+    href: 'https://atomgit.com/fyinfor/token-factory',
     icon: AtomGitIcon,
   },
   {
     name: 'Gitee',
-    href: 'https://gitee.com/QuantumNous/new-api',
+    href: 'https://gitee.com/fyinfor/token-factory',
     icon: GiteeIcon,
   },
   {
     name: 'Docker',
-    href: 'https://hub.docker.com/r/calciumion/new-api',
+    href: 'https://hub.docker.com/r/calciumion/token-factory',
     icon: DockerIcon,
   },
   {
@@ -64,7 +64,7 @@ const socialLinks: { name: string; href: string; icon: React.ReactNode }[] = [
   },
   {
     name: 'Product Hunt',
-    href: 'https://www.producthunt.com/products/new-api',
+    href: 'https://www.producthunt.com/products/token-factory',
     icon: ProductHuntIcon,
   },
 ];
@@ -93,8 +93,8 @@ const relatedProjects: { label: string; href: string }[] = [
 const friendshipLinks: { label: string; href: string }[] = [
   { label: 'CoAI', href: 'https://github.com/coaidev/coai' },
   {
-    label: 'new-api-horizon',
-    href: 'https://github.com/Calcium-Ion/new-api-horizon',
+    label: 'token-factory-horizon',
+    href: 'https://github.com/Calcium-Ion/token-factory-horizon',
   },
   { label: 'GPT-Load', href: 'https://www.gpt-load.com' },
   { label: 'LangBot', href: 'https://langbot.app' },
@@ -172,7 +172,7 @@ const translations: Record<string, FooterTranslation> = {
       relatedProjects: 'Related Projects',
       friendshipLinks: 'Friendship Links',
     },
-    copyright: '© 2025 QuantumNous. All Rights Reserved.',
+    copyright: '© 2025 fyinfor. All Rights Reserved.',
   },
   ja: {
     sections: {
@@ -191,7 +191,7 @@ const translations: Record<string, FooterTranslation> = {
       relatedProjects: '関連プロジェクト',
       friendshipLinks: '友好リンク',
     },
-    copyright: '© 2025 QuantumNous. All Rights Reserved.',
+    copyright: '© 2025 fyinfor. All Rights Reserved.',
   },
 };
 
@@ -222,14 +222,14 @@ function buildSections(t: FooterTranslation) {
         { label: t.sections.docs.apiDocs, href: internalPaths.apiDocs },
       ],
     },
-    {
-      title: t.sections.relatedProjects,
-      links: relatedProjects.map((p) => ({ ...p, external: true })),
-    },
-    {
-      title: t.sections.friendshipLinks,
-      links: friendshipLinks.map((p) => ({ ...p, external: true })),
-    },
+    // {
+    //   title: t.sections.relatedProjects,
+    //   links: relatedProjects.map((p) => ({ ...p, external: true })),
+    // },
+    // {
+    //   title: t.sections.friendshipLinks,
+    //   links: friendshipLinks.map((p) => ({ ...p, external: true })),
+    // },
   ];
 }
 
@@ -278,9 +278,9 @@ export function Footer({ lang }: FooterProps) {
         </div>
 
         {/* Bottom: Copyright and Social */}
-        <div className="border-fd-border flex flex-col items-start justify-between gap-4 border-t pt-8 sm:flex-row sm:items-center">
+        {/* <div className="border-fd-border flex flex-col items-start justify-between gap-4 border-t pt-8 sm:flex-row sm:items-center"> */}
           {/* Left: Copyright and Beian */}
-          <div className="text-fd-muted-foreground flex flex-col gap-2 text-xs">
+          {/* <div className="text-fd-muted-foreground flex flex-col gap-2 text-xs">
             <p>{t.copyright}</p>
             <div className="flex flex-col gap-1 sm:flex-row sm:gap-3">
               {beianLinks.map((item, index) => (
@@ -295,10 +295,10 @@ export function Footer({ lang }: FooterProps) {
                 </a>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Right: Social Icons */}
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             {socialLinks.map((social) => {
               const isExternal = social.href.startsWith('http');
               const Component = isExternal ? 'a' : Link;
@@ -320,7 +320,7 @@ export function Footer({ lang }: FooterProps) {
               );
             })}
           </div>
-        </div>
+        </div> */}
       </div>
     </footer>
   );

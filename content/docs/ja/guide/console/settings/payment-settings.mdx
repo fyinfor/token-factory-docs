@@ -61,7 +61,7 @@ title: 支払い設定
 - type: チャネル識別子。バックエンドのルーティングと注文に使用されます。
   - `stripe` → Stripeゲートウェイを使用します。
   - その他（例： `alipay`、`wxpay`、`custom1`など）→ EPayスタイルのゲートウェイを使用し、この値をチャネルパラメータとして透過的に渡します。
-  - 詳細なロジックはバックエンドコントローラー `controller/topup.go` を参照してください（参考: [controller/topup.go](https://github.com/QuantumNous/new-api/blob/main/controller/topup.go)）。
+  - 詳細なロジックはバックエンドコントローラー `controller/topup.go` を参照してください（参考: [controller/topup.go](https://github.com/fyinfor/token-factory/blob/main/controller/topup.go)）。
 - min_topup: 最低チャージ金額（単位はページ通貨と一致）。入力金額がこの値より小さい場合、ページに「この支払い方法の最低チャージ金額はXです」と表示され、支払いの開始が制限されます。バックエンドでも検証が行われます。
 - ソート: 配列の順序に従って左から右へレンダリングされます。
 
@@ -92,4 +92,4 @@ title: 支払い設定
 - キー：チャージ金額（文字列形式）
 - 値：割引率（0-1の間の小数、例：0.95は95%の価格、つまり5%割引を表します）
 - システムは設定に基づいて、実際の支払い金額と節約金額を自動的に計算します。
-- 詳細な実装ロジックはバックエンドコントローラー [controller/topup.go](https://github.com/QuantumNous/new-api/blob/main/controller/topup.go) を参照してください。
+- 詳細な実装ロジックはバックエンドコントローラー [controller/topup.go](https://github.com/fyinfor/token-factory/blob/main/controller/topup.go) を参照してください。

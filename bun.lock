@@ -1,8 +1,9 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "new-api-docs-v1",
+      "name": "token-factory-docs",
       "dependencies": {
         "@ai-sdk/openai-compatible": "^1.0.27",
         "@ai-sdk/react": "^2.0.93",

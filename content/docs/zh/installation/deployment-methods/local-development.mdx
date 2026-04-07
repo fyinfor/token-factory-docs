@@ -2,7 +2,7 @@
 title: 本地开发部署
 ---
 
-本文档提供了在本地环境中设置和开发 New API 项目的详细步骤，适合希望参与项目开发或进行功能定制的开发者。
+本文档提供了在本地环境中设置和开发 TokenFactory 项目的详细步骤，适合希望参与项目开发或进行功能定制的开发者。
 
 ## 开发环境要求
 
@@ -22,11 +22,11 @@ title: 本地开发部署
 
 ## 克隆项目
 
-首先，从 GitHub 克隆 New API 仓库到本地：
+首先，从 GitHub 克隆 TokenFactory 仓库到本地：
 
 ```bash
-git clone https://github.com/Calcium-Ion/new-api.git
-cd new-api
+git clone https://github.com/Calcium-Ion/token-factory.git
+cd token-factory
 ```
 
 ## 后端开发设置
@@ -39,7 +39,7 @@ go mod download
 
 ### 配置开发环境
 
-New API 支持通过 `.env` 文件配置环境变量。创建 `.env` 文件（可从 `.env.example` 复制）：
+TokenFactory 支持通过 `.env` 文件配置环境变量。创建 `.env` 文件（可从 `.env.example` 复制）：
 
 ```bash
 cp .env.example .env
@@ -49,7 +49,7 @@ cp .env.example .env
 
 ```bash
 PORT=3000
-SQL_DSN=root:password@tcp(localhost:3306)/new-api   # 如使用MySQL，取消注释并修改
+SQL_DSN=root:password@tcp(localhost:3306)/token-factory   # 如使用MySQL，取消注释并修改
 # REDIS_CONN_STRING=redis://localhost:6379         # 如使用Redis，取消注释并修改
 ```
 
@@ -65,15 +65,15 @@ SQL_DSN=root:password@tcp(localhost:3306)/new-api   # 如使用MySQL，取消注
 go run main.go
 
 # 或者编译后运行
-go build -o new-api
-./new-api
+go build -o token-factory
+./token-factory
 ```
 
 服务默认运行在 `http://localhost:3000`
 
 ## 前端开发设置
 
-New API 的前端代码位于 `web` 目录中，使用 React 和 [semi design 组件库](https://semi.design/zh-CN) 开发。
+TokenFactory 的前端代码位于 `web` 目录中，使用 React 和 [semi design 组件库](https://semi.design/zh-CN) 开发。
 
 ### 安装 Bun（推荐）
 
@@ -153,10 +153,10 @@ bun run build   # 使用 bun 构建前端资源
 
 ## 项目结构
 
-New API 项目的目录结构：
+TokenFactory 项目的目录结构：
 
 ```
-new-api/                                 # 项目根目录
+token-factory/                                 # 项目根目录
 │  .dockerignore                         # Docker 构建时忽略的文件配置
 │  .env.example                          # 环境变量示例文件
 │  .gitignore                            # Git 忽略文件配置
@@ -737,7 +737,7 @@ new-api/                                 # 项目根目录
 <Callout type="info" title="需要帮助？">
 如果您在开发过程中遇到问题，可以：
 
-1. 查看 [GitHub Issues](https://github.com/Calcium-Ion/new-api/issues)
+1. 查看 [GitHub Issues](https://github.com/Calcium-Ion/token-factory/issues)
 2. 加入 [QQ交流群](/zh/docs/support/community-interaction)
 3. 通过 [问题反馈](/zh/docs/support/feedback-issues) 页面提交问题
 

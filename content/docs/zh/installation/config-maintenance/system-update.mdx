@@ -9,7 +9,7 @@ title: 系统更新指南
 在更新系统之前，建议执行以下准备工作：
 
 1. **备份数据**：备份数据库和重要配置文件
-2. **查看更新日志**：在[GitHub Releases](https://github.com/Calcium-Ion/new-api/releases)查看最新版本的更新内容
+2. **查看更新日志**：在[GitHub Releases](https://github.com/Calcium-Ion/token-factory/releases)查看最新版本的更新内容
 3. **检查兼容性**：确认新版本与您现有的插件、集成或自定义配置是否兼容
 4. **选择合适的时间**：在低峰期执行更新，减少对用户的影响
 
@@ -21,18 +21,18 @@ title: 系统更新指南
 
 ```shell
 # 拉取最新镜像
-docker pull calciumion/new-api:latest
+docker pull calciumion/token-factory:latest
 
 # 停止并移除旧容器
-docker stop new-api
-docker rm new-api
+docker stop token-factory
+docker rm token-factory
 
 # 使用相同的参数重新运行容器
-docker run --name new-api -d --restart always \
+docker run --name token-factory -d --restart always \
   -p 3000:3000 \
   -e TZ=Asia/Shanghai \
   -v /your/data/path:/data \
-  calciumion/new-api:latest
+  calciumion/token-factory:latest
 ```
 
 <Callout type="warn" title="请你注意">
@@ -45,7 +45,7 @@ docker run --name new-api -d --restart always \
 
 ```shell
 # 进入项目目录
-cd new-api
+cd token-factory
 
 # 拉取最新镜像
 docker compose pull
@@ -66,7 +66,7 @@ docker compose pull && docker compose down && docker compose up -d
 如果您使用 1Panel 面板部署，可以按照以下步骤更新：
 
 1. 登录 1Panel 面板，进入 **应用商店** -> **可升级页面**
-2. 找到 New API 应用，点击 **升级** 按钮
+2. 找到 TokenFactory 应用，点击 **升级** 按钮
 3. 选择 **要升级到的目标版本**
 4. 点击 **确认** 按钮，系统将自动拉取最新镜像升级应用
 
@@ -85,13 +85,13 @@ docker compose pull && docker compose down && docker compose up -d
 
 ```shell
 # 进入项目目录
-cd new-api
+cd token-factory
 
 # 拉取最新代码
 git pull
 
 # 编译后端
-go build -o new-api
+go build -o token-factory
 
 # 更新并编译前端
 cd web
@@ -100,7 +100,7 @@ bun run build
 cd ..
 
 # 重启服务
-./new-api --port 3000
+./token-factory --port 3000
 ```
 
 ## 多节点部署的更新策略
@@ -135,31 +135,31 @@ cd ..
 
 ```shell
 # 拉取特定版本的镜像
-docker pull calciumion/new-api:v1.x.x
+docker pull calciumion/token-factory:v1.x.x
 
 # 停止并移除当前容器
-docker stop new-api
-docker rm new-api
+docker stop token-factory
+docker rm token-factory
 
 # 使用旧版本镜像重新创建容器
-docker run --name new-api -d --restart always \
+docker run --name token-factory -d --restart always \
   -p 3000:3000 \
   -e TZ=Asia/Shanghai \
   -v /your/data/path:/data \
-  calciumion/new-api:v1.x.x
+  calciumion/token-factory:v1.x.x
 ```
 
 ### 源码回滚
 
 ```shell
 # 进入项目目录
-cd new-api
+cd token-factory
 
 # 切换到特定版本
 git checkout v1.x.x
 
 # 重新编译
-go build -o new-api
+go build -o token-factory
 
 # 更新并编译前端
 cd web
@@ -168,7 +168,7 @@ bun run build
 cd ..
 
 # 重启服务
-./new-api --port 3000
+./token-factory --port 3000
 ```
 
 ## 常见问题
@@ -198,7 +198,7 @@ cd ..
 ```shell
 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
   nickfedor/watchtower -c \
-  --run-once new-api
+  --run-once token-factory
 ```
 
 <Callout type="warn" title="请你注意">

@@ -21,11 +21,11 @@ title: Docker 部署
 ### 使用SQLite数据库（不推荐）
 
 ```shell
-docker run --name new-api -d --restart always \
+docker run --name token-factory -d --restart always \
   -p 3000:3000 \
   -e TZ=Asia/Shanghai \
   -v /your/data/path:/data \
-  calciumion/new-api:latest
+  calciumion/token-factory:latest
 ```
 
 <Callout type="warn" title="注意">
@@ -35,12 +35,12 @@ docker run --name new-api -d --restart always \
 ### 使用MySQL数据库
 
 ```shell
-docker run --name new-api -d --restart always \
+docker run --name token-factory -d --restart always \
   -p 3000:3000 \
   -e SQL_DSN="用户名:密码@tcp(数据库地址:3306)/数据库名" \
   -e TZ=Asia/Shanghai \
   -v /your/data/path:/data \
-  calciumion/new-api:latest
+  calciumion/token-factory:latest
 ```
 
 <Callout type="warn" title="注意">

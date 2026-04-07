@@ -15,7 +15,7 @@ export function Provider({
 }) {
   return (
     <RootProvider i18n={i18n}>
-      <GlobalBanner lang={lang} />
+      {/* <GlobalBanner lang={lang} /> */}
       {children}
     </RootProvider>
   );

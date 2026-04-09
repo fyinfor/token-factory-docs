@@ -3,6 +3,18 @@ import { i18n } from '@/lib/i18n';
 import Image from 'next/image';
 import type { LinkItemType } from 'fumadocs-ui/layouts/docs';
 
+const translations: Record<string, { siteName: string }> = {
+  en: {
+    siteName: 'TokenFactory',
+  },
+  zh: {
+    siteName: '词元工厂',
+  },
+  ja: {
+    siteName: 'TokenFactory',
+  },
+};
+
 export const linkItems: LinkItemType[] = [
   {
     type: 'icon',
@@ -56,6 +68,8 @@ export const logo = (
 );
 
 export function baseOptions(locale: string): BaseLayoutProps {
+  const t = translations[locale] || translations.en;
+  
   return {
     i18n,
     nav: {
@@ -63,7 +77,7 @@ export function baseOptions(locale: string): BaseLayoutProps {
         <>
           {logo}
           <span className="font-medium in-[header]:text-[15px] [.uwu_&]:hidden">
-            TokenFactory
+            {t.siteName}
           </span>
         </>
       ),

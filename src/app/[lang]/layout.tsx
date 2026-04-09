@@ -43,19 +43,19 @@ const titleMap: Record<
   { default: string; template: string; description: string }
 > = {
   en: {
-    default: 'TokenFactory - The Foundation of Your AI Universe',
+    default: 'TokenFactory - Unified input for large language models',
     template: '%s | TokenFactory',
     description:
       'Connect all AI providers, manage your AI assets, and build the future on a unified infrastructure platform. Deploy in minutes, scale effortlessly.',
   },
   zh: {
-    default: 'TokenFactory - AI 基座',
+    default: 'TokenFactory - 大语言模型的统一入口',
     template: '%s | TokenFactory',
     description:
       '承载所有 AI 应用，管理你的数字资产，连接未来的统一基础设施平台。快速部署，轻松扩展。',
   },
   ja: {
-    default: 'TokenFactory - あなたの AI ユニバースの基盤',
+    default: 'TokenFactory - 大規模言語モデルの統一入力',
     template: '%s | TokenFactory',
     description:
       'すべての AI プロバイダーを接続し、AI アセットを管理し、統一されたインフラストラクチャプラットフォームで未来を構築。数分でデプロイ、簡単にスケール。',

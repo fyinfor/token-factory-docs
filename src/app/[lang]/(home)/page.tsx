@@ -52,7 +52,7 @@ const contentMap: Record<
   },
   ja: {
     badge: 'あなたの AI ユニバースの基盤',
-    title: 'すべての AI プロバイダーを接続し、AI アセットを管理し、',
+    title: '大規模言語モデルの統一入力',
     subtitle: '',
     highlight: '未来を構築',
     getStarted: 'はじめに',

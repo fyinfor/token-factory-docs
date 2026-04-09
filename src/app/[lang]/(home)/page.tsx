@@ -3,7 +3,7 @@ import { Github, BookOpen } from 'lucide-react';
 import { Hero } from './page.client';
 import { getLocalePath, i18n } from '@/lib/i18n';
 import Image from 'next/image';
-import { AntifraudDialog } from '@/components/antifraud-dialog';
+// import { AntifraudDialog } from '@/components/antifraud-dialog';
 
 const contentMap: Record<
   string,
@@ -265,7 +265,7 @@ export default async function Page({
         </div>
       </section> */}
 
-      <AntifraudDialog lang={lang} />
+      {/* <AntifraudDialog lang={lang} /> */}
     </main>
   );
 }

@@ -1,32 +1,19 @@
 /**
  * Prebuild Script
- * Generates changelog and special-thanks before build
+ * Placeholder for future prebuild tasks
  */
-
-import { generateChangelog } from './build-changelog';
-import { generateSpecialThanks } from './build-special-thanks';
 
 async function prebuild() {
   console.log('═══════════════════════════════════════════════');
-  console.log('🚀 Starting prebuild process...');
+  console.log('🚀 Prebuild process started');
   console.log('═══════════════════════════════════════════════\n');
 
-  const startTime = Date.now();
+  // No prebuild tasks currently configured
+  console.log('ℹ️  No prebuild tasks to execute');
 
-  try {
-    // Generate changelog and special-thanks in parallel
-    await Promise.all([generateChangelog(), generateSpecialThanks()]);
-
-    const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-
-    console.log('═══════════════════════════════════════════════');
-    console.log(`✅ Prebuild completed! Duration: ${duration}s`);
-    console.log('═══════════════════════════════════════════════\n');
-  } catch (error) {
-    console.error('❌ Prebuild failed:', error);
-    // Don't exit process, let the build continue
-    console.log('⚠ Build will continue but may use old or missing data\n');
-  }
+  console.log('\n═══════════════════════════════════════════════');
+  console.log('✅ Prebuild completed!');
+  console.log('═══════════════════════════════════════════════\n');
 }
 
 // Execute prebuild

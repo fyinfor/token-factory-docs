@@ -3,8 +3,9 @@
 FROM oven/bun:1 AS deps
 WORKDIR /app
 
+# postinstall runs fumadocs-mdx and needs source.config.ts + content/docs; skip here
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+RUN bun install --frozen-lockfile --ignore-scripts
 
 FROM oven/bun:1 AS builder
 WORKDIR /app
@@ -15,7 +16,7 @@ ENV NODE_ENV=production
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN bun run build
+RUN bun run postinstall && bun run build
 
 FROM node:22-alpine AS runner
 WORKDIR /app

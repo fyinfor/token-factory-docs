@@ -27,8 +27,20 @@ export function createMetadata(override: Metadata): Metadata {
   };
 }
 
-export const baseUrl =
-  process.env.NODE_ENV === 'development' ||
-  !process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? new URL('http://localhost:3000')
-    : new URL(`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`);
+function resolveBaseUrl(): URL {
+  const explicit = process.env.DOCS_PUBLIC_URL?.trim();
+  if (explicit) {
+    const u = explicit.replace(/\/+$/, '');
+    return new URL(u.startsWith('http') ? u : `https://${u}`);
+  }
+  if (process.env.NODE_ENV === 'development') {
+    return new URL('http://localhost:3000');
+  }
+  const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  if (vercelHost) {
+    return new URL(`https://${vercelHost}`);
+  }
+  return new URL('http://localhost:3000');
+}
+
+export const baseUrl = resolveBaseUrl();

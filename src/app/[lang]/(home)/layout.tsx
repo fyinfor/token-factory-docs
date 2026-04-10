@@ -152,18 +152,18 @@ export default async function Layout({
               icon: <Icon />,
             })),
           },
-          {
-            type: 'main',
-            on: 'menu',
-            text: texts.skills.text,
-            url: `${docsUrl}/skills`,
-            icon: <Puzzle />,
-          },
+          // {
+          //   type: 'main',
+          //   on: 'menu',
+          //   text: texts.skills.text,
+          //   url: `${docsUrl}/skills`,
+          //   icon: <Puzzle />,
+          // },
           // {
           //   type: 'main',
           //   on: 'menu',
           //   text: texts.apiDocs.text,
-          //   url: 'https://apifox.newapi.ai/',
+          //   url: 'https://apifox.tokenfactoryopen.com/',
           //   icon: <FileCode />,
           //   external: true,
           // },
@@ -213,26 +213,26 @@ export default async function Layout({
               </NavbarMenu>
             ),
           },
-          {
-            type: 'custom',
-            on: 'nav',
-            children: (
-              <Link
-                href={`${docsUrl}/skills`}
-                className="inline-flex items-center gap-1.5 text-sm text-fd-muted-foreground transition-colors hover:text-fd-foreground"
-              >
-                {texts.skills.text}
-                {/* <span className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
-                  New
-                </span> */}
-              </Link>
-            ),
-          },
+          // {
+          //   type: 'custom',
+          //   on: 'nav',
+          //   children: (
+          //     <Link
+          //       href={`${docsUrl}/skills`}
+          //       className="inline-flex items-center gap-1.5 text-sm text-fd-muted-foreground transition-colors hover:text-fd-foreground"
+          //     >
+          //       {texts.skills.text}
+          //       {/* <span className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+          //         New
+          //       </span> */}
+          //     </Link>
+          //   ),
+          // },
           // {
           //   type: 'main',
           //   on: 'nav',
           //   text: texts.apiDocs.text,
-          //   url: 'https://apifox.newapi.ai/',
+          //   url: 'https://apifox.tokenfactoryopen.com/',
           //   external: true,
           // },
           ...linkItems,

@@ -5,9 +5,6 @@
   "root": true,
   "pages": [
     "index",
-    "faq",
-    "community-interaction",
-    "feedback-issues",
-    "buy-us-a-coffee"
+    "faq"
   ]
 }

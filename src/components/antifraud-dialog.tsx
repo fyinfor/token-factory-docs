@@ -4,7 +4,7 @@ import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { ShieldAlert } from 'lucide-react';
 
-const STORAGE_KEY_PREFIX = 'newapi-antifraud-acknowledged';
+const STORAGE_KEY_PREFIX = 'tokenfactory-antifraud-acknowledged';
 const COOLDOWN_SECONDS = 10;
 
 const B = ({ children }: { children: ReactNode }) => (

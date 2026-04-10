@@ -10,14 +10,14 @@ const config = {
     serverActions: {
       allowedOrigins: [
         'localhost:3000',
-        // newapi.pro domains
-        'docs.newapi.pro',
-        'newapi.pro',
-        'www.newapi.pro',
-        // newapi.ai domains
-        'docs.newapi.ai',
-        'newapi.ai',
-        'www.newapi.ai',
+        // tokenfactory.pro domains
+        'docs.tokenfactory.pro',
+        'tokenfactory.pro',
+        'www.tokenfactory.pro',
+        // tokenfactoryopen.com domains
+        'docs.tokenfactoryopen.com',
+        'tokenfactoryopen.com',
+        'www.tokenfactoryopen.com',
         // Vercel preview
         'token-factory-docs.vercel.app',
       ],

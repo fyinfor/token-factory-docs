@@ -4,8 +4,6 @@
   "pages": [
     "docker-installation",
     "docker-compose-installation",
-    "1panel-installation",
-    "bt-docker-installation",
     "cluster-deployment",
     "local-development"
   ]

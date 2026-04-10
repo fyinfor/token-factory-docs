@@ -15,21 +15,21 @@ const BANNER_CONFIG = {
   variant: 'rainbow' as const,
 
   // Link URL
-  linkUrl: 'https://doc.newapi.pro',
+  linkUrl: 'https://doc.tokenfactory.pro',
 
   // Multi-language text configuration
   text: {
     en: {
       message: 'Documentation renewed! For old docs, visit',
-      linkText: 'doc.newapi.pro',
+      linkText: 'doc.tokenfactory.pro',
     },
     zh: {
       message: '文档焕新，旧文档请访问',
-      linkText: 'doc.newapi.pro',
+      linkText: 'doc.tokenfactory.pro',
     },
     ja: {
       message: 'ドキュメントが一新されました！旧ドキュメントは',
-      linkText: 'doc.newapi.pro',
+      linkText: 'doc.tokenfactory.pro',
     },
   } as Record<string, { message: string; linkText: string }>,
 };

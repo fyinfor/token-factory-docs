@@ -3,7 +3,7 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import './global.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.newapi.ai'),
+  metadataBase: new URL('https://www.tokenfactoryopen.com'),
   other: {
     charset: 'utf-8',
   },

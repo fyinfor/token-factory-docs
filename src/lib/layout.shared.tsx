@@ -8,7 +8,7 @@ const translations: Record<string, { siteName: string }> = {
     siteName: 'TokenFactory',
   },
   zh: {
-    siteName: '词元工厂',
+    siteName: '开放词元工厂',
   },
   ja: {
     siteName: 'TokenFactory',
@@ -81,6 +81,7 @@ export function baseOptions(locale: string): BaseLayoutProps {
           </span>
         </>
       ),
+      url: 'https://tokenfactoryopen.com/',
     },
   };
 }

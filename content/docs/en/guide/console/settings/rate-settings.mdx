@@ -2,11 +2,11 @@
 title: Ratio Settings
 ---
 
-Ratio settings are a core configuration of the NewAPI billing system, allowing flexible control over the billing standards for various models and user groups by setting different ratios.
+Ratio settings are a core configuration of the TokenFactory billing system, allowing flexible control over the billing standards for various models and user groups by setting different ratios.
 
 ## Ratio System Overview
 
-NewAPI uses a three-tier ratio system to calculate user quota consumption:
+TokenFactory uses a three-tier ratio system to calculate user quota consumption:
 
 1.  Model Ratio - Defines the base billing multiplier for different AI models
 2.  Completion Ratio - Applies additional billing adjustments to output tokens
@@ -36,7 +36,7 @@ In the TokenFactory system, ratios are key parameters for calculating quota cons
 配额消耗 = 模型固定价格 × 分组倍率 × 配额单位(500,000)
 ```
 
-#### Audio Models (Special handling, automatically processed internally by NewAPI)
+#### Audio Models (Special handling, automatically processed internally by TokenFactory)
 
 ```
 配额消耗 = (文本输入token + 文本输出token × 补全倍率 + 音频输入token × 音频倍率 + 音频输出token × 音频倍率 × 音频补全倍率) × 模型倍率 × 分组倍率

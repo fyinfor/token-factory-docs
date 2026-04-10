@@ -1,0 +1,77 @@
+---
+title: tokenfactory-admin (Coming Soon)
+description: tokenfactory-admin is the official TokenFactory admin-level Skill plugin, enabling channel management, user management, system configuration, log queries and more directly from Claude Code, Cursor, Windsurf and other AI editors. Currently under development.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+<Callout type="warn" title="Under Development — Coming Soon">
+  **tokenfactory-admin** is currently under development and has not been released yet. Below is a preview of planned features. This page will be updated with full documentation upon release.
+</Callout>
+
+## Introduction
+
+**tokenfactory-admin** is a Skill plugin designed for TokenFactory administrators. Unlike the user-level [tokenfactory](/en/docs/skills/tokenfactory) Skill, tokenfactory-admin focuses on **admin operations**, allowing site administrators to perform daily management tasks from within their AI editor using natural language commands — no need to log into the admin dashboard.
+
+## Planned Features
+
+### Channel Management
+
+| Command (Planned) | Description |
+|-------------------|-------------|
+| `/tokenfactory-admin channels` | List all channels and their status |
+| `/tokenfactory-admin channel-add` | Add new channels (OpenAI, Claude, Gemini, Azure, etc.) |
+| `/tokenfactory-admin channel-test <id>` | Test connectivity of a specific channel |
+| `/tokenfactory-admin channel-toggle <id>` | Enable or disable a specific channel |
+| `/tokenfactory-admin channel-priority` | View and adjust channel priority |
+
+### User Management
+
+| Command (Planned) | Description |
+|-------------------|-------------|
+| `/tokenfactory-admin users` | List users |
+| `/tokenfactory-admin user-info <id>` | View user details (balance, group, usage) |
+| `/tokenfactory-admin user-quota <id>` | Adjust user quota and balance |
+| `/tokenfactory-admin user-group <id> <group>` | Change user's group |
+| `/tokenfactory-admin user-ban <id>` | Ban or unban a user |
+
+### System Configuration
+
+| Command (Planned) | Description |
+|-------------------|-------------|
+| `/tokenfactory-admin config` | View current system configuration |
+| `/tokenfactory-admin config-set <key> <value>` | Modify a system configuration item |
+| `/tokenfactory-admin ratio` | View model rate multiplier settings |
+| `/tokenfactory-admin ratio-sync` | Sync upstream model rate multipliers |
+
+### Logs & Monitoring
+
+| Command (Planned) | Description |
+|-------------------|-------------|
+| `/tokenfactory-admin logs` | View recent request logs |
+| `/tokenfactory-admin stats` | View system statistics (request volume, consumption, error rate) |
+| `/tokenfactory-admin status` | Check system health and channel connectivity |
+
+### Token & Redemption Management
+
+| Command (Planned) | Description |
+|-------------------|-------------|
+| `/tokenfactory-admin redemptions` | List redemption codes |
+| `/tokenfactory-admin redemption-create` | Batch create redemption codes |
+| `/tokenfactory-admin token-overview` | Global token usage overview |
+
+## Comparison with tokenfactory Skill
+
+| | tokenfactory | tokenfactory-admin |
+|---|--------|-------------|
+| **Target Users** | Regular users / developers | Site administrators |
+| **Scope** | Personal models, tokens, balance, groups | Global channels, users, config, logs |
+| **Permissions** | User access token | Admin access token |
+| **Status** | Released | Under development |
+
+## Stay Updated
+
+tokenfactory-admin is under active development. Follow the repository for the latest updates:
+
+- GitHub Repository: [github.com/fyinfor/skills](https://github.com/fyinfor/skills)
+- Released user-level Skill: [tokenfactory](/en/docs/skills/tokenfactory)

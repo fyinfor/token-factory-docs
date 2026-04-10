@@ -180,7 +180,7 @@ const translations = {
     questions: [
       {
         id: 'q1',
-        question: '1. New APIとは何ですか？',
+        question: '1. Token Factoryとは何ですか？',
         options: [
           { value: 'a', label: '商用API販売プラットフォーム' },
           {
@@ -192,7 +192,7 @@ const translations = {
         ],
         correct: 'b',
         errorMessage:
-          'プロジェクト紹介を再度お読みください。New APIはオープンソースのAIインターフェース管理・配布システムです。',
+          'プロジェクト紹介を再度お読みください。Token FactoryはオープンソースのAIインターフェース管理・配布システムです。',
       },
       {
         id: 'q2',
@@ -208,18 +208,18 @@ const translations = {
       },
       {
         id: 'q3',
-        question: '3. New APIにはクローズドソースの有料版がありますか？',
+        question: '3. Token Factoryにはクローズドソースの有料版がありますか？',
         options: [
           { value: 'true', label: 'はい、クローズドソースの有料版があります' },
           {
             value: 'false',
             label:
-              'いいえ、New APIはオープンソースソフトウェアですが、特定のシナリオでは商用ライセンスが必要です',
+              'いいえ、Token Factoryはオープンソースソフトウェアですが、特定のシナリオでは商用ライセンスが必要です',
           },
         ],
         correct: 'false',
         errorMessage:
-          'グループルール4により：New APIはオープンソースソフトウェアですが、特定のシナリオでは商用ライセンスが必要です。詳細については、プロジェクト紹介をご覧ください。',
+          'グループルール4により：Token Factoryはオープンソースソフトウェアですが、特定のシナリオでは商用ライセンスが必要です。詳細については、プロジェクト紹介をご覧ください。',
       },
       {
         id: 'q4',

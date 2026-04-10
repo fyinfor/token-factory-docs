@@ -4,14 +4,14 @@ export function createMetadata(override: Metadata): Metadata {
   return {
     ...override,
     icons: {
-      icon: '/favicon.ico',
-      shortcut: '/favicon.ico',
+      icon: '/favicon.png',
+      shortcut: '/favicon.png',
       apple: '/assets/logo.png',
     },
     openGraph: {
       title: override.title ?? undefined,
       description: override.description ?? undefined,
-      url: 'https://www.newapi.ai',
+      url: 'https://www.tokenfactoryopen.com',
       images: '/assets/logo.png',
       siteName: 'TokenFactory',
       type: 'website',

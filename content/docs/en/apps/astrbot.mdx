@@ -18,15 +18,15 @@ description: AstrBot setup guide — integrate this open-source Agent chatbot pl
 - Official Documentation: [https://docs.astrbot.app](https://docs.astrbot.app)
 - Project Homepage: [https://github.com/astrbotdevs/astrbot](https://github.com/astrbotdevs/astrbot)
 
-## NewAPI Integration Method
+## TokenFactory Integration Method
 
-AstrBot supports integrating NewAPI as a model provider, allowing users to access and use various AI model services through NewAPI.
+AstrBot supports integrating TokenFactory as a model provider, allowing users to access and use various AI model services through TokenFactory.
 
 ### Configuration Steps
 
-#### Obtain NewAPI API Key
+#### Obtain TokenFactory API Key
 
-After registering and logging in to NewAPI, click 'Console' in the top navigation bar, click 'Token Management', then click the 'Add Token' button to create a new API Key, select appropriate permissions, and then click 'Create'.
+After registering and logging in to TokenFactory, click 'Console' in the top navigation bar, click 'Token Management', then click the 'Add Token' button to create a Token Factory Key, select appropriate permissions, and then click 'Create'.
 
 ![create-api-key](/assets/astrbot/image.png)
 
@@ -34,24 +34,24 @@ After successful creation, click the 'Copy Key' button to copy the generated API
 
 ![copy-api-key](/assets/astrbot/image-1.png)
 
-#### Configure NewAPI Service Provider in AstrBot
+#### Configure TokenFactory Service Provider in AstrBot
 
 Open the AstrBot management panel, go to the 'Model Providers' page, then click the 'Add Model Provider' button.
 
-NewAPI perfectly supports OpenAI Chat Completion and Responses interfaces. We click 'OpenAI' to enter the OpenAI provider's configuration page.
+TokenFactory perfectly supports OpenAI Chat Completion and Responses interfaces. We click 'OpenAI' to enter the OpenAI provider's configuration page.
 
-In the pop-up dialog box, set the API Base URL to NewAPI's interface address. If you have deployed NewAPI locally, fill in the local address, for example, `http://localhost:3000/v1`. If you are using NewAPI services provided by a third-party service provider, fill in the corresponding URL address, for example, `https://api.example.com/v1`.
+In the pop-up dialog box, set the API Base URL to TokenFactory's interface address. If you have deployed TokenFactory locally, fill in the local address, for example, `http://localhost:3000/v1`. If you are using TokenFactory services provided by a third-party service provider, fill in the corresponding URL address, for example, `https://api.example.com/v1`.
 
 Then, enter the API Key into the 'API Key' field and click the 'Save' button.
 
 ![astrbot-provider-config](/assets/astrbot/image-2.png)
 
-Then click Save to complete the NewAPI provider configuration.
+Then click Save to complete the TokenFactory provider configuration.
 
 #### Apply Service Provider
 
-Go to the 'Configuration File' page, find the 'Models' section, change 'Default Chat Model' to the NewAPI provider you just created, and click the 'Save' button.
+Go to the 'Configuration File' page, find the 'Models' section, change 'Default Chat Model' to the TokenFactory provider you just created, and click the 'Save' button.
 
 ![apply](/assets/astrbot/image-3.png)
 
-At this point, you have successfully configured NewAPI as AstrBot's model provider. Now, you can access and use various AI model services provided by NewAPI through AstrBot.
+At this point, you have successfully configured TokenFactory as AstrBot's model provider. Now, you can access and use various AI model services provided by TokenFactory through AstrBot.

@@ -92,22 +92,22 @@ OpenClaw's configuration file is usually located at `~/.openclaw/openclaw.json`.
 
 ## 🚀 Using TokenFactory as a Model Provider
 
-OpenClaw supports integrating custom or OpenAI-compatible model gateways via `models.providers`. For TokenFactory, the most common approach is to add it as a custom provider to the configuration, then point the default model to `newapi/MODEL_ID`.
+OpenClaw supports integrating custom or OpenAI-compatible model gateways via `models.providers`. For TokenFactory, the most common approach is to add it as a custom provider to the configuration, then point the default model to `tokenfactory/MODEL_ID`.
 
 ### Integration Approach
 
-1. Declare a `newapi` provider under `models.providers`.
+1. Declare a `tokenfactory` provider under `models.providers`.
 2. Point `baseUrl` to your TokenFactory address, ensuring it includes `/v1`.
 3. Set `api` to `openai-completions`.
 4. List the model IDs you want OpenClaw to use in `models`.
-5. Switch the default model to `newapi/...` in `agents.defaults.model.primary`.
+5. Switch the default model to `tokenfactory/...` in `agents.defaults.model.primary`.
 
 ### Recommended Practice: Store API Keys in Environment Variables
 
 First, provide your TokenFactory key in the current shell, service environment, or a `.env` file readable by OpenClaw:
 
 ```bash
-export NEWAPI_API_KEY="sk-your-newapi-key"
+export TOKENFACTORY_API_KEY="sk-your-tokenfactory-key"
 ```
 
 Then, add or modify the following snippet in `openclaw.json`:
@@ -117,9 +117,9 @@ Then, add or modify the following snippet in `openclaw.json`:
   models: {
     mode: "merge",
     providers: {
-      newapi: {
-        baseUrl: "https://<your-newapi-domain>/v1",
-        apiKey: "${NEWAPI_API_KEY}",
+      tokenfactory: {
+        baseUrl: "https://<your-tokenfactory-domain>/v1",
+        apiKey: "${TOKENFACTORY_API_KEY}",
         api: "openai-completions",
         models: [
           { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash" },
@@ -132,12 +132,12 @@ Then, add or modify the following snippet in `openclaw.json`:
   agents: {
     defaults: {
       model: {
-        primary: "newapi/gemini-2.5-flash",
-        fallbacks: ["newapi/kimi-k2.5"],
+        primary: "tokenfactory/gemini-2.5-flash",
+        fallbacks: ["tokenfactory/kimi-k2.5"],
       },
       models: {
-        "newapi/gemini-2.5-flash": { alias: "flash" },
-        "newapi/kimi-k2.5": { alias: "kimi" },
+        "tokenfactory/gemini-2.5-flash": { alias: "flash" },
+        "tokenfactory/kimi-k2.5": { alias: "kimi" },
       },
     },
   },
@@ -150,11 +150,11 @@ This is not a complete configuration to be copied verbatim, but rather the most 
 
 | Configuration Item | Description |
 | --- | --- |
-| `models.mode` | Recommended to set to `merge` to append `newapi` while retaining OpenClaw's built-in providers. |
-| `models.providers.newapi.baseUrl` | Your TokenFactory address, usually needs to include `/v1`. |
-| `models.providers.newapi.apiKey` | TokenFactory key, recommended to inject via `${NEWAPI_API_KEY}`. |
-| `models.providers.newapi.api` | For OpenAI-compatible gateways like TokenFactory, use `openai-completions`. |
-| `models.providers.newapi.models` | The model IDs listed here must match the actual model names exposed by your TokenFactory. |
+| `models.mode` | Recommended to set to `merge` to append `tokenfactory` while retaining OpenClaw's built-in providers. |
+| `models.providers.tokenfactory.baseUrl` | Your TokenFactory address, usually needs to include `/v1`. |
+| `models.providers.tokenfactory.apiKey` | TokenFactory key, recommended to inject via `${TOKENFACTORY_API_KEY}`. |
+| `models.providers.tokenfactory.api` | For OpenAI-compatible gateways like TokenFactory, use `openai-completions`. |
+| `models.providers.tokenfactory.models` | The model IDs listed here must match the actual model names exposed by your TokenFactory. |
 | `agents.defaults.model.primary` | Default primary model, format must be `provider/model-id`. |
 | `agents.defaults.model.fallbacks` | Fallback model list, automatically switches if the primary model fails. |
 | `agents.defaults.models` | Optional, used to create aliases for models, convenient for referencing in UI or conversations. |
@@ -167,17 +167,17 @@ After completing the configuration, return to or reopen the Control UI:
 openclaw dashboard
 ```
 
-If you can initiate conversations normally in OpenClaw and the default model has become `newapi/...`, then the integration is successful. You can also use:
+If you can initiate conversations normally in OpenClaw and the default model has become `tokenfactory/...`, then the integration is successful. You can also use:
 
 ```bash
 openclaw models list
 ```
 
-to confirm that models with the `newapi/` prefix appear in the selectable list.
+to confirm that models with the `tokenfactory/` prefix appear in the selectable list.
 
 ### Common Issues
 
 - `baseUrl` without `/v1`: This is one of the most common integration errors.
-- Incorrect model ID: `primary` and `fallbacks` must correspond to the `id` in `models.providers.newapi.models`.
-- Key only effective in the current terminal: If Gateway runs as a background service, ensure the service process can also read `NEWAPI_API_KEY`.
+- Incorrect model ID: `primary` and `fallbacks` must correspond to the `id` in `models.providers.tokenfactory.models`.
+- Key only effective in the current terminal: If Gateway runs as a background service, ensure the service process can also read `TOKENFACTORY_API_KEY`.
 - For foreground troubleshooting: You can use the official foreground running method `openclaw gateway --port 18789` to observe logs and errors.

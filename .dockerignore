@@ -1,0 +1,31 @@
+# dependencies & build
+node_modules
+.next
+out
+
+# generated
+.source
+
+# env & local
+.env
+.env.*
+!.env.example
+.vercel
+.DS_Store
+*.pem
+
+# git & ide
+.git
+.github
+.cursor
+.idea
+
+# logs & test
+coverage
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# misc
+*.tsbuildinfo
+next-env.d.ts

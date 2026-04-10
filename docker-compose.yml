@@ -1,0 +1,18 @@
+# 文档站对外端口 3001；容器内仍为 3000（与 token-factory 主栈同网段时可访问 token-factory:3000 等）
+services:
+  docs:
+    build: .
+    container_name: token-factory-docs
+    ports:
+      - '3001:3000'
+    environment:
+      DOCS_PUBLIC_URL: ${DOCS_PUBLIC_URL:-http://localhost:3001}
+      PORT: '3000'
+      HOSTNAME: '0.0.0.0'
+    networks:
+      - token-factory-network
+
+networks:
+  token-factory-network:
+    external: true
+    name: token-factory_token-factory-network

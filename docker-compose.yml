@@ -1,7 +1,10 @@
 # 文档站对外端口 3001；容器内仍为 3000（与 token-factory 主栈同网段时可访问 token-factory:3000 等）
+# 生产服务器：勿写 build: .（占磁盘）；先 docker compose pull 再 up -d --no-build，或 make up
+# 本地构建镜像: docker build -t ghcr.io/fyinfor/token-factory-docs:local . 后设 DOCS_IMAGE=...:local
 services:
   docs:
-    build: .
+    image: ${DOCS_IMAGE:-ghcr.io/fyinfor/token-factory-docs:latest}
+    pull_policy: ${DOCS_PULL_POLICY:-always}
     container_name: token-factory-docs
     ports:
       - '3001:3000'

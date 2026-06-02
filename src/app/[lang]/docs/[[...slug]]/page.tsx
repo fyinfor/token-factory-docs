@@ -9,9 +9,7 @@ import { notFound } from 'next/navigation';
 import { getMDXComponents } from '@/mdx-components';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
-import { Feedback } from '@/components/feedback';
 import { LLMCopyButton, ViewOptions } from '@/components/page-actions';
-import { onRateAction } from '@/lib/github';
 import { BrandTextReplacer } from '@/components/brand-text-replacer';
 import { getDocsConfig, replaceBrandName } from '@/lib/docs-config';
 
@@ -71,7 +69,6 @@ export default async function Page(props: {
           />
         </BrandTextReplacer>
       </DocsBody>
-      <Feedback lang={lang} onRateAction={onRateAction} />
     </DocsPage>
   );
 }

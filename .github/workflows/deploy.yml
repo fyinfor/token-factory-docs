@@ -48,9 +48,9 @@ jobs:
       - name: Deploy tokease-factory-docs (43.132.223.112)
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.SERVER_A_HOST }}
-          port: ${{ secrets.SERVER_A_PORT || 22 }}
-          username: ${{ secrets.SERVER_A_USER }}
+          host: 43.132.223.112
+          port: 22
+          username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY_112 }}
           script: |
             set -e
@@ -59,7 +59,7 @@ jobs:
             PORT="3021"
 
             echo "========================================="
-            echo "  服务器: ${{ secrets.SERVER_A_HOST }}"
+            echo "  服务器: 43.132.223.112"
             echo "  实例:   tokease-factory-docs"
             echo "  镜像:   $IMAGE"
             echo "  时间:   $(date '+%Y-%m-%d %H:%M:%S')"
@@ -108,9 +108,9 @@ jobs:
       - name: Deploy token-factory-docs (43.132.223.112)
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.SERVER_A_HOST }}
-          port: ${{ secrets.SERVER_A_PORT || 22 }}
-          username: ${{ secrets.SERVER_A_USER }}
+          host: 43.132.223.112
+          port: 22
+          username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY_112 }}
           script: |
             set -e
@@ -119,7 +119,7 @@ jobs:
             PORT="3001"
 
             echo "========================================="
-            echo "  服务器: ${{ secrets.SERVER_A_HOST }}"
+            echo "  服务器: 43.132.223.112"
             echo "  实例:   token-factory-docs"
             echo "  镜像:   $IMAGE"
             echo "========================================="
@@ -163,9 +163,9 @@ jobs:
       - name: Cleanup old images (43.132.223.112)
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.SERVER_A_HOST }}
-          port: ${{ secrets.SERVER_A_PORT || 22 }}
-          username: ${{ secrets.SERVER_A_USER }}
+          host: 43.132.223.112
+          port: 22
+          username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY_112 }}
           script: |
             echo ">>> Cleaning up dangling images..."
@@ -196,9 +196,9 @@ jobs:
       - name: Login to ACR (43.138.142.105)
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.SERVER_B_HOST }}
-          port: ${{ secrets.SERVER_B_PORT || 22 }}
-          username: ${{ secrets.SERVER_B_USER }}
+          host: 43.138.142.105
+          port: 22
+          username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY_112 }}
           script: |
             set -e
@@ -211,9 +211,9 @@ jobs:
       - name: Deploy tokease-token-factory-docs (43.138.142.105)
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.SERVER_B_HOST }}
-          port: ${{ secrets.SERVER_B_PORT || 22 }}
-          username: ${{ secrets.SERVER_B_USER }}
+          host: 43.138.142.105
+          port: 22
+          username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY_112 }}
           script: |
             set -e
@@ -222,7 +222,7 @@ jobs:
             PORT="3021"
 
             echo "========================================="
-            echo "  服务器: ${{ secrets.SERVER_B_HOST }}"
+            echo "  服务器: 43.138.142.105"
             echo "  实例:   tokease-token-factory-docs"
             echo "  镜像:   $IMAGE"
             echo "  时间:   $(date '+%Y-%m-%d %H:%M:%S')"
@@ -271,9 +271,9 @@ jobs:
       - name: Deploy token-factory-docs (43.138.142.105)
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.SERVER_B_HOST }}
-          port: ${{ secrets.SERVER_B_PORT || 22 }}
-          username: ${{ secrets.SERVER_B_USER }}
+          host: 43.138.142.105
+          port: 22
+          username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY_112 }}
           script: |
             set -e
@@ -282,7 +282,7 @@ jobs:
             PORT="3001"
 
             echo "========================================="
-            echo "  服务器: ${{ secrets.SERVER_B_HOST }}"
+            echo "  服务器: 43.138.142.105"
             echo "  实例:   token-factory-docs"
             echo "  镜像:   $IMAGE"
             echo "========================================="
@@ -326,9 +326,9 @@ jobs:
       - name: Deploy token-factory-docs-123-tok (43.138.142.105)
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.SERVER_B_HOST }}
-          port: ${{ secrets.SERVER_B_PORT || 22 }}
-          username: ${{ secrets.SERVER_B_USER }}
+          host: 43.138.142.105
+          port: 22
+          username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY_112 }}
           script: |
             set -e
@@ -337,7 +337,7 @@ jobs:
             PORT="3005"
 
             echo "========================================="
-            echo "  服务器: ${{ secrets.SERVER_B_HOST }}"
+            echo "  服务器: 43.138.142.105"
             echo "  实例:   token-factory-docs-123-tok"
             echo "  镜像:   $IMAGE"
             echo "========================================="
@@ -381,9 +381,9 @@ jobs:
       - name: Cleanup old images (43.138.142.105)
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.SERVER_B_HOST }}
-          port: ${{ secrets.SERVER_B_PORT || 22 }}
-          username: ${{ secrets.SERVER_B_USER }}
+          host: 43.138.142.105
+          port: 22
+          username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY_112 }}
           script: |
             echo ">>> Cleaning up dangling images..."

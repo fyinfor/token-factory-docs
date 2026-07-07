@@ -72,12 +72,23 @@ jobs:
           username: ${{ secrets.ACR_ALLINONE_USERNAME }}
           password: ${{ secrets.ACR_ALLINONE_PASSWORD }}
 
+      - name: Set image targets
+        id: image_targets
+        run: |
+          {
+            echo 'images<<EOF'
+            echo "${{ env.REGISTRY_GHCR }}/${{ env.IMAGE_NAME_GHCR }}"
+            if [ "${{ github.event.inputs.push_acr }}" = "true" ]; then
+              echo "${{ env.REGISTRY_ACR }}/${{ env.IMAGE_NAME_ACR }}"
+            fi
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ${{ env.REGISTRY_GHCR }}/${{ env.IMAGE_NAME_GHCR }}${{ github.event.inputs.push_acr == 'true' && format('\n{0}/{1}', env.REGISTRY_ACR, env.IMAGE_NAME_ACR) || '' }}
+          images: ${{ steps.image_targets.outputs.images }}
           tags: |
             type=raw,value=latest
             type=sha,prefix=sha-

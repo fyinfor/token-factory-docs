@@ -1,0 +1,150 @@
+# 手动触发：仅构建 linux/arm64，双推 GHCR + 阿里云 ACR。
+# 与 docker-publish.yml（amd64）并列，不修改原文件；标签强制带 -arm64，避免覆盖 x86。
+#
+# 拉取示例：
+#   GHCR: docker pull ghcr.io/fyinfor/token-factory-docs:latest-arm64
+#   ACR:  docker pull crpi-sk2z151c9de4cnvh.cn-hangzhou.personal.cr.aliyuncs.com/fyinfor123/token-factory-docs:latest-arm64
+#
+# ARM 服务器 compose 示例：
+#   image: ghcr.io/fyinfor/token-factory-docs:latest-arm64
+#   # 或 ACR: .../fyinfor123/token-factory-docs:latest-arm64
+
+name: Docker build and push (ARM64)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref to build (branch, tag, or SHA)'
+        required: false
+        default: 'main'
+        type: string
+      extra_tag:
+        description: 'Optional base tag（自动追加 -arm64；如 v1.0.0 → v1.0.0-arm64）'
+        required: false
+        default: ''
+        type: string
+      push_acr:
+        description: '推送到阿里云 ACR（国内服务器拉取用）'
+        type: boolean
+        default: true
+
+env:
+  REGISTRY_GHCR: ghcr.io
+  IMAGE_NAME_GHCR: fyinfor/token-factory-docs
+  REGISTRY_ACR: crpi-sk2z151c9de4cnvh.cn-hangzhou.personal.cr.aliyuncs.com
+  IMAGE_NAME_ACR: fyinfor123/token-factory-docs
+
+jobs:
+  build-and-push-arm64:
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY_GHCR }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 检查 ACR Secrets
+        if: github.event.inputs.push_acr == 'true'
+        env:
+          ACR_USER: ${{ secrets.ACR_ALLINONE_USERNAME }}
+          ACR_PASS: ${{ secrets.ACR_ALLINONE_PASSWORD }}
+        run: |
+          if [ -z "$ACR_USER" ] || [ -z "$ACR_PASS" ]; then
+            echo "::error::未配置 ACR_ALLINONE_USERNAME / ACR_ALLINONE_PASSWORD。请到 token-factory-docs → Settings → Secrets 添加（值与 token-factory 相同），或取消勾选「推送到阿里云 ACR」。"
+            exit 1
+          fi
+
+      - name: Log in to Alibaba Cloud ACR
+        if: github.event.inputs.push_acr == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY_ACR }}
+          username: ${{ secrets.ACR_ALLINONE_USERNAME }}
+          password: ${{ secrets.ACR_ALLINONE_PASSWORD }}
+
+      - name: Set image targets
+        id: image_targets
+        run: |
+          {
+            echo 'images<<EOF'
+            echo "${{ env.REGISTRY_GHCR }}/${{ env.IMAGE_NAME_GHCR }}"
+            if [ "${{ github.event.inputs.push_acr }}" = "true" ]; then
+              echo "${{ env.REGISTRY_ACR }}/${{ env.IMAGE_NAME_ACR }}"
+            fi
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Resolve arm64 tags
+        id: arm_tags
+        run: |
+          # 固定 latest-arm64；extra_tag 有值则追加 <extra>-arm64（已带 -arm64 则不重复）
+          tags=$'type=raw,value=latest-arm64\ntype=sha,prefix=sha-,suffix=-arm64'
+          extra="${{ github.event.inputs.extra_tag }}"
+          if [ -n "$extra" ]; then
+            case "$extra" in
+              *-arm64) arm_extra="$extra" ;;
+              *)       arm_extra="${extra}-arm64" ;;
+            esac
+            tags="${tags}"$'\n'"type=raw,value=${arm_extra}"
+          fi
+          {
+            echo 'tags<<EOF'
+            echo "$tags"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+          echo "Resolved metadata tags:"
+          echo "$tags"
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.image_targets.outputs.images }}
+          tags: ${{ steps.arm_tags.outputs.tags }}
+
+      - name: Build and push (linux/arm64)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=docs-arm64
+          cache-to: type=gha,mode=max,scope=docs-arm64
+
+      - name: Image summary
+        run: |
+          {
+            echo "### Published (ARM64)"
+            echo ""
+            echo "- **架构**：\`linux/arm64\`"
+            echo "- **注意**：标签均为 \`*-arm64\`，不会覆盖 amd64 的 \`latest\`"
+            echo ""
+            echo '```'
+            echo "${{ steps.meta.outputs.tags }}"
+            echo '```'
+            echo ""
+            echo "**GHCR pull:**"
+            echo "\`docker pull ${{ env.REGISTRY_GHCR }}/${{ env.IMAGE_NAME_GHCR }}:latest-arm64\`"
+            if [ "${{ github.event.inputs.push_acr }}" = "true" ]; then
+              echo ""
+              echo "**ACR pull:**"
+              echo "\`docker pull ${{ env.REGISTRY_ACR }}/${{ env.IMAGE_NAME_ACR }}:latest-arm64\`"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

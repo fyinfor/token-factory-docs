@@ -8,8 +8,9 @@ name: Deploy Docs to Servers
 # 镜像源:
 #   服务器 A → ghcr.io/fyinfor/token-factory-docs:<tag>
 #   服务器 B → crpi-sk2z151c9de4cnvh.cn-hangzhou.personal.cr.aliyuncs.com/fyinfor123/token-factory-docs:<tag>
+#   服务器 C → 同上 ACR
 #
-# 部署目标 (两台服务器 × 多实例 = 6 个部署):
+# 部署目标 (三台服务器 × 多实例):
 #   服务器 A (43.132.223.112):
 #     ├─ /home/ubuntu/tokease-factory-docs
 #     └─ /home/ubuntu/token-factory-docs
@@ -18,10 +19,18 @@ name: Deploy Docs to Servers
 #     ├─ /home/ubuntu/demo-tokease-factory-docs
 #     ├─ /home/ubuntu/token-factory-docs
 #     └─ /home/ubuntu/token-factory-docs-123-tok
+#   服务器 C (139.199.57.140):
+#     ├─ /home/ubuntu/tokease-token-factory-docs
+#     └─ /home/ubuntu/seedance2-factory-stack/seedance2-factory-docs
 #
-# 手动触发可选部署目标（默认两台都部署）:
+# 手动触发可选部署目标（默认三台都部署）:
 #   deploy_server_a → 112 HK
 #   deploy_server_b → 105 Tencent
+#   deploy_server_c → 140 node2 (seedance2 / tokease 文档栈)
+#
+# 服务器 C SSH（独立于 112）:
+#   GitHub Secret: SSH_PRIVATE_KEY_140
+#   公钥在 139.199.57.140 ~/.ssh/authorized_keys（github-actions-token-factory-docs-140）
 # ============================================================================
 
 on:
@@ -40,6 +49,10 @@ on:
         description: '部署到 105 Tencent 国内站 (43.138.142.105)'
         type: boolean
         default: true
+      deploy_server_c:
+        description: '部署到 140 node2 (139.199.57.140)'
+        type: boolean
+        default: true
 
 env:
   REGISTRY_GHCR: ghcr.io
@@ -47,6 +60,7 @@ env:
   REGISTRY_ACR: crpi-sk2z151c9de4cnvh.cn-hangzhou.personal.cr.aliyuncs.com
   IMAGE_NAME_ACR: fyinfor123/token-factory-docs
   # tokease 3021；demo-tokease 3022；token-factory 3001；123-tok 3005
+  # 140: tokease-token-factory-docs 3022；seedance2-factory-docs 3011
 
 jobs:
   validate-inputs:
@@ -54,9 +68,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Require at least one server
-        if: ${{ github.event.inputs.deploy_server_a != 'true' && github.event.inputs.deploy_server_b != 'true' }}
+        if: ${{ github.event.inputs.deploy_server_a != 'true' && github.event.inputs.deploy_server_b != 'true' && github.event.inputs.deploy_server_c != 'true' }}
         run: |
-          echo "::error::请至少勾选一台服务器（112 或 105）"
+          echo "::error::请至少勾选一台服务器（112 / 105 / 140）"
           exit 1
 
   deploy-server-a:
@@ -489,4 +503,174 @@ jobs:
             echo "| 实例2 | demo-tokease-factory-docs |"
             echo "| 实例3 | token-factory-docs |"
             echo "| 实例4 | token-factory-docs-123-tok |"
+          } >> $GITHUB_STEP_SUMMARY
+
+  deploy-server-c:
+    name: Deploy → 139.199.57.140
+    needs: validate-inputs
+    if: ${{ github.event.inputs.deploy_server_c == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Login to ACR (139.199.57.140)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: 139.199.57.140
+          port: 22
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY_140 }}
+          script: |
+            set -e
+            echo "${{ secrets.ACR_ALLINONE_PASSWORD }}" | sudo docker login \
+              ${{ env.REGISTRY_ACR }} \
+              -u "${{ secrets.ACR_ALLINONE_USERNAME }}" \
+              --password-stdin
+            echo "✅ ACR login success"
+
+      - name: Deploy tokease-token-factory-docs (139.199.57.140)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: 139.199.57.140
+          port: 22
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY_140 }}
+          script: |
+            set -e
+            IMAGE="${{ env.REGISTRY_ACR }}/${{ env.IMAGE_NAME_ACR }}:${{ inputs.tag }}"
+            DIR="/home/ubuntu/tokease-token-factory-docs"
+            PORT="3022"
+
+            echo "========================================="
+            echo "  服务器: 139.199.57.140"
+            echo "  实例:   tokease-token-factory-docs"
+            echo "  镜像:   $IMAGE"
+            echo "  时间:   $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "========================================="
+
+            cd "$DIR" || { echo "❌ 目录不存在: $DIR"; exit 1; }
+
+            echo ""
+            echo "[1/4] Stopping old stack..."
+            sudo docker compose down --remove-orphans 2>/dev/null || true
+
+            echo ""
+            echo "[2/4] Pulling image from ACR..."
+            sudo docker compose pull
+
+            echo ""
+            echo "[3/4] Starting services..."
+            sudo docker compose up -d --no-build --force-recreate
+
+            echo ""
+            echo "[4/4] Health check..."
+            sleep 5
+            HEALTHY=false
+            for i in 1 2 3 4 5; do
+              if sudo docker compose ps --status running 2>/dev/null | grep -qE '(Up|running|healthy)'; then
+                CODE=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:${PORT}/" || echo 000)
+                if echo "$CODE" | grep -qE '^(200|301|302|307)$'; then
+                  HEALTHY=true
+                  echo "✅ tokease-token-factory-docs 运行正常 HTTP ${CODE} (第 ${i} 次检查)"
+                  break
+                fi
+              fi
+              echo "⏳ 等待... (${i}/5)"
+              sleep 10
+            done
+
+            if [ "$HEALTHY" = false ]; then
+              echo "⚠️ 健康检查未通过, 当前容器状态:"
+              sudo docker compose ps
+              sudo docker compose logs --tail=30
+              exit 1
+            fi
+
+            sudo docker compose ps
+
+      - name: Deploy seedance2-factory-docs (139.199.57.140)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: 139.199.57.140
+          port: 22
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY_140 }}
+          script: |
+            set -e
+            IMAGE="${{ env.REGISTRY_ACR }}/${{ env.IMAGE_NAME_ACR }}:${{ inputs.tag }}"
+            DIR="/home/ubuntu/seedance2-factory-stack/seedance2-factory-docs"
+            PORT="3011"
+
+            echo "========================================="
+            echo "  服务器: 139.199.57.140"
+            echo "  实例:   seedance2-factory-docs"
+            echo "  镜像:   $IMAGE"
+            echo "  时间:   $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "========================================="
+
+            cd "$DIR" || { echo "❌ 目录不存在: $DIR"; exit 1; }
+
+            echo ""
+            echo "[1/4] Stopping old stack..."
+            sudo docker compose down --remove-orphans 2>/dev/null || true
+
+            echo ""
+            echo "[2/4] Pulling image from ACR..."
+            sudo docker compose pull
+
+            echo ""
+            echo "[3/4] Starting services..."
+            sudo docker compose up -d --no-build --force-recreate
+
+            echo ""
+            echo "[4/4] Health check..."
+            sleep 5
+            HEALTHY=false
+            for i in 1 2 3 4 5; do
+              if sudo docker compose ps --status running 2>/dev/null | grep -qE '(Up|running|healthy)'; then
+                CODE=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:${PORT}/" || echo 000)
+                if echo "$CODE" | grep -qE '^(200|301|302|307)$'; then
+                  HEALTHY=true
+                  echo "✅ seedance2-factory-docs 运行正常 HTTP ${CODE} (第 ${i} 次检查)"
+                  break
+                fi
+              fi
+              echo "⏳ 等待... (${i}/5)"
+              sleep 10
+            done
+
+            if [ "$HEALTHY" = false ]; then
+              echo "⚠️ 健康检查未通过, 当前容器状态:"
+              sudo docker compose ps
+              sudo docker compose logs --tail=30
+              exit 1
+            fi
+
+            sudo docker compose ps
+
+      - name: Cleanup old images (139.199.57.140)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: 139.199.57.140
+          port: 22
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY_140 }}
+          script: |
+            echo ">>> Cleaning up dangling images..."
+            sudo docker image prune -f || true
+            echo "✅ Cleanup done"
+
+      - name: Summary (Server C)
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          ICON="$([ "$STATUS" = "success" ] && echo '✅' || echo '❌')"
+          {
+            echo "### ${ICON} Server C (139.199.57.140) — ${STATUS}"
+            echo ""
+            echo "| 项目 | 值 |"
+            echo "|------|-----|"
+            echo "| 镜像 | \`${{ env.REGISTRY_ACR }}/${{ env.IMAGE_NAME_ACR }}:${{ inputs.tag }}\` |"
+            echo "| 实例1 | tokease-token-factory-docs (3022) |"
+            echo "| 实例2 | seedance2-factory-docs (3011) |"
           } >> $GITHUB_STEP_SUMMARY

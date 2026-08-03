@@ -13,9 +13,15 @@ _openapi:
           支持文生视频、图生视频、视频生视频、多参考图、多参考视频等模式。返回任务 ID，可通过 GET 接口查询任务状态。
 ---
 
-提交视频生成任务，适用于**视频系列模型**。
+提交视频生成任务，适用于**视频系列模型**（转换模式）。
 
 **接口地址**：`POST /v1/video/generations`
+
+完整参数、首尾帧、参考音频、`asset://` 素材库引用等说明见：
+
+- [Seedance 2.0 转换模式](/zh/docs/api/ai-model/videos/seedance/convert)
+- [Seedance 2.0 透传模式](/zh/docs/api/ai-model/videos/seedance/passthrough)
+- [素材库 API（用户）](/zh/docs/api/ai-model/videos/material/user)
 
 ## 生成模式
 
@@ -23,6 +29,7 @@ _openapi:
 | --- | --- | --- |
 | 文生视频 | `model` + `prompt` | 不传 `images`、`metadata.video_urls` |
 | 图生视频 | `model` + `prompt` + `images` | `images` 含 1 张图 |
+| 首尾帧生视频 | `model` + `prompt` + `first_frame_url` + `last_frame_url` | 也可写在 `metadata`；与多模态参考图互斥 |
 | 视频生视频 | `model` + `prompt` + `metadata.video_urls` | 含 1 个视频 |
 | 多参考图 | `images` 含多张 | 每张图作为参考素材 |
 | 多参考视频 | `metadata.video_urls` 含多个 | 每个视频作为参考素材 |
@@ -32,9 +39,10 @@ _openapi:
 - **单张图 / 单个视频**：`images` 或 `metadata.video_urls` 数组只放 1 个 URL
 - **多张参考图 / 多个参考视频**：按顺序传入多个 URL，建议在 `prompt` 中说明各素材用途
 - **文生视频**：不要传 `images` 或 `metadata.video_urls`
-- URL 须公网可访问（HTTP/HTTPS）
+- 地址须为公网可访问的 HTTP/HTTPS，或本平台素材库 `asset://{AssetId}`
 - 图片格式：`.png`、`.jpg`、`.jpeg`、`.webp`
 - 视频格式：`.mp4`、`.mov`、`.webm`
+- 音频格式：`.mp3`、`.wav`（通过 `metadata.audio_urls`）
 
 ## 文生视频示例
 
@@ -48,7 +56,8 @@ curl -X POST "__apiBaseUrl__/v1/video/generations" \
     "duration": 5,
     "metadata": {
       "resolution": "720p",
-      "ratio": "16:9"
+      "ratio": "16:9",
+      "generate_audio": true
     }
   }'
 ```
@@ -137,6 +146,30 @@ curl -X POST "__apiBaseUrl__/v1/video/generations" \
   }'
 ```
 
+## 素材库引用示例
+
+```bash
+curl -X POST "__apiBaseUrl__/v1/video/generations" \
+  -H "Authorization: Bearer <YOUR_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Seedance 2.0/uP",
+    "prompt": "保持素材库角色面部特征，根据参考音频说话",
+    "images": [
+      "asset://asset-20260612200812-mmq8g"
+    ],
+    "duration": 5,
+    "metadata": {
+      "audio_urls": [
+        "asset://asset-20260617155448-fkgww"
+      ],
+      "generate_audio": true,
+      "resolution": "720p",
+      "ratio": "16:9"
+    }
+  }'
+```
+
 ## 返回示例
 
 ```json
@@ -146,7 +179,7 @@ curl -X POST "__apiBaseUrl__/v1/video/generations" \
   "model": "Seedance 2.0/uP",
   "status": "queued",
   "progress": 0,
-  "created_at": "2026-06-17T08:00:00Z"
+  "created_at": 1784716366
 }
 ```
 

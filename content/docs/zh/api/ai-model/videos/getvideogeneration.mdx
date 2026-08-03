@@ -17,11 +17,11 @@ _openapi:
           - `failed`: 失败
 ---
 
-查询视频生成任务的状态和结果。任务完成后，通过 `output.video_url` 获取生成的视频地址。
+查询视频生成任务的状态和结果。任务完成后，通过 `output.video_url`（或 `content.video_url`）获取生成的视频地址。
 
 **接口地址**：`GET /v1/video/generations/{task_id}`
 
-其中 `{task_id}` 为创建任务时返回的 `id` 字段。
+其中 `{task_id}` 为创建任务时返回的 `id` 字段。更完整的字段说明见 [Seedance 2.0 转换模式 · 任务查询](/zh/docs/api/ai-model/videos/seedance/convert)。
 
 ## 任务状态
 
@@ -48,23 +48,41 @@ curl -X GET "__apiBaseUrl__/v1/video/generations/task_abc123" \
   "model": "Seedance 2.0/uP",
   "status": "completed",
   "progress": 100,
-  "created_at": "2026-06-17T08:00:00Z",
-  "completed_at": "2026-06-17T08:01:30Z",
+  "created_at": 1784716366,
+  "completed_at": 1784716518,
+  "ratio": "16:9",
+  "resolution": "720p",
+  "duration": 5,
+  "content": {
+    "video_url": "https://cdn.example.com/output/task_abc123.mp4",
+    "last_frame_url": "https://cdn.example.com/output/task_abc123_last-frame.png"
+  },
   "output": {
     "video_url": "https://cdn.example.com/output/task_abc123.mp4"
+  },
+  "metadata": {
+    "last_frame_url": "https://cdn.example.com/output/task_abc123_last-frame.png"
+  },
+  "usage": {
+    "completion_tokens": 50638,
+    "total_tokens": 50638
   },
   "error": null
 }
 ```
 
+> `output.video_url` 与 `content.video_url` 通常指向同一成片；`last_frame_url` 需提交时设置 `return_last_frame=true`。
+
 ## 错误处理建议
 
 | 场景 | 处理建议 |
 | --- | --- |
-| 图生视频未传 `images` | 在 `images` 中补充至少 1 张图片 URL |
-| 视频生视频未传 `metadata.video_urls` | 在 `metadata.video_urls` 中补充至少 1 个视频 URL |
-| 资源 URL 无法访问 | 确认公网可达、格式正确 |
+| 图生视频未传 `images` | 在 `images` 中补充至少 1 张图片 URL 或 `asset://` |
+| 视频生视频未传 `metadata.video_urls` | 在 `metadata.video_urls` 中补充至少 1 个视频地址 |
+| 资源 URL 无法访问 | 确认公网可达、格式正确；或改用素材库 `asset://` |
+| 素材库引用失败 | 确认素材 `Status=Active`，且属于当前账号 |
 | 鉴权失败 | 检查 API Key |
 | 生成失败 | 简化 `prompt` 或减少参考素材数量 |
+| 需要 `safety_identifier` / 精确首尾帧 role | 使用 [透传模式](/zh/docs/api/ai-model/videos/seedance/passthrough) |
 
 <APIPage document={"openapi/generated/ai-model/视频（Videos）/get-v1-video-generations-task-id-getvideogeneration-383844577.json"} operations={[{"path":"/v1/video/generations/{task_id}","method":"get"}]} />

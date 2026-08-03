@@ -1,3 +1,14 @@
 {
-  "title": "令牌管理"
+  "title": "令牌管理",
+  "pages": [
+    "token-get",
+    "token-post",
+    "token-put",
+    "token-search-get",
+    "token-id-get",
+    "token-id-delete",
+    "token-batch-post",
+    "usage-token-get",
+    "token-usage-logs"
+  ]
 }

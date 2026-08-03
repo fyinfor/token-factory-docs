@@ -1,0 +1,632 @@
+---
+title: Seedance 2.0 视频生成（透传模式）
+description: Seedance 2.0 透传模式：按火山官方 content[] 格式提交，支持首尾帧 role、safety_identifier 等高级参数。
+---
+> **请求模式**：透传模式（请求体按火山官方格式提交，基本原样转发上游）  
+> **适用模型**：seedance2.0 系列（可用平台模型名如 `seedance2.0-huoshan`）  
+> **BaseURL**：`__apiBaseUrl__`  
+> **相关文档**：[转换模式](/zh/docs/api/ai-model/videos/seedance/convert) · [素材库（用户）](/zh/docs/api/ai-model/videos/material/user) · [素材库（中转站）](/zh/docs/api/ai-model/videos/material/relay)
+
+---
+
+## 0. 与转换模式的差异
+
+| 对比项       | 转换模式                                 | 透传模式                                                |
+| --------- | ------------------------------------ | --------------------------------------------------- |
+| 文本输入      | 顶层 `prompt`                          | `content[]` 中 `type=text`                           |
+| 图片输入      | 顶层 `images` 字符串数组                    | `content[]` 中 `type=image_url` + `role`             |
+| 视频 / 音频输入 | `metadata.video_urls` / `audio_urls` | `content[]` 中 `type=video_url` / `audio_url`        |
+| 图片 role   | 统一为 `reference_image`                | 支持 `first_frame` / `last_frame` / `reference_image` |
+| 高级参数      | 部分不支持（如 `safety_identifier`）         | 可原样转发（如 `safety_identifier`、`priority`）             |
+| 查询接口与返回   | 一致                                   | **一致**                                              |
+
+---
+
+## 1. 接口概览
+
+| 项目   | 说明                                                      |
+| ---- | ------------------------------------------------------- |
+| 提交任务 | `POST /v1/video/generations`                            |
+| 查询任务 | `GET /v1/video/generations/{task_id}`                   |
+| 提交地址 | `__apiBaseUrl__/v1/video/generations`           |
+| 查询地址 | `__apiBaseUrl__/v1/video/generations/{task_id}` |
+| 鉴权   | `Authorization: Bearer <YOUR_API_KEY>`                  |
+| 内容类型 | `Content-Type: application/json`                        |
+| 示例模型 | `seedance2.0-huoshan` |
+
+---
+
+## 2. 请求头
+
+```http
+Authorization: Bearer <YOUR_API_KEY>
+Content-Type: application/json
+```
+
+---
+
+## 3. 请求参数（官方格式）
+
+### 3.1 核心参数
+
+| 参数名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| model | string | 是 | 模型名称；平台可映射为上游真实模型 ID |
+| content | object[] | 是 | 官方内容数组，按顺序包含文本、图片、视频、音频等对象 |
+
+### 3.2 content[] 内容对象
+
+| type | 结构要点 | role（如适用） | 说明 |
+| --- | --- | --- | --- |
+| `text` | `{ "type":"text", "text":"..." }` | — | 正向提示词文本 |
+| `image_url` | `{ "type":"image_url", "image_url":{"url":"..."}, "role":"..." }` | 见下表 | 图片输入 |
+| `video_url` | `{ "type":"video_url", "video_url":{"url":"..."}, "role":"reference_video" }` | `reference_video` | 参考视频 |
+| `audio_url` | `{ "type":"audio_url", "audio_url":{"url":"..."}, "role":"reference_audio" }` | `reference_audio` | 参考音频 |
+
+#### 图片 role
+
+| role | 说明 |
+| --- | --- |
+| `first_frame` | 首帧图片（精确控制起始画面） |
+| `last_frame` | 尾帧图片（精确控制结束画面） |
+| `reference_image` | 普通参考图片 |
+
+> URL 支持公网 HTTP/HTTPS，或本平台素材库 `asset://{AssetId}`（见第 13 节）。
+
+### 3.3 视频规格参数（顶层）
+
+| 参数名 | 类型 | 必填 | 可选值 / 默认 | 说明 |
+| --- | --- | --- | --- | --- |
+| resolution | string | 否 | `480p`、`720p`、`1080p`、`4k` | 分辨率 |
+| ratio | string | 否 | `16:9`、`9:16`、`1:1` 等 | 画面比例 |
+| duration | integer | 否 | `4`–`15`，或 `-1` | 时长（秒）；`-1` 表示模型智能选择 |
+| seed | integer | 否 | 任意整数 | 随机种子 |
+| watermark | boolean | 否 | `true` / `false` | 是否加水印 |
+
+### 3.4 生成控制参数（顶层）
+
+| 参数名                     | 类型               | 必填  | 说明                                       |
+| ----------------------- | ---------------- | --- | ---------------------------------------- |
+| generate_audio          | boolean          | 否   | 是否生成成片音频；**建议显式传入**；`false` 为无声视频        |
+| callback_url            | string           | 否   | 任务完成回调地址                                 |
+| return_last_frame       | boolean          | 否   | 是否返回尾帧图；为 `true` 时查询结果含 `last_frame_url` |
+| service_tier            | string           | 否   | 服务等级（按上游约定）                              |
+| execution_expires_after | integer          | 否   | 任务执行过期时间（秒，按上游约定）                        |
+| tools                   | object[]         | 否   | 工具列表，如 `[{"type":"web_search"}]`         |
+| safety_identifier       | string           | 否   | 安全标识；**仅透传模式可原样转发**                      |
+| priority                | integer / string | 否   | 优先级；**仅透传模式可原样转发**（按上游约定填写）              |
+
+### 3.5 生成模式对照
+
+| 模式 | content 要点 | 说明 |
+| --- | --- | --- |
+| 文生视频 | 仅 `type=text` | 不传图片/视频 content 项 |
+| 图生视频 | `text` + 1 个 `image_url` | 常用 `role=reference_image` 或 `first_frame` |
+| 首尾帧生视频 | `text` + `first_frame` + `last_frame` | 精确控制起止画面 |
+| 视频生视频 | `text` + 1 个 `video_url` | `role=reference_video` |
+| 多参考图 | 多个 `image_url` | 均为参考图时用 `reference_image` |
+| 多参考视频 | 多个 `video_url` | 均为 `reference_video` |
+| 参考音频 | 增加 `audio_url` | `role=reference_audio`；可与图/视频组合 |
+| 无声视频 | 顶层 `generate_audio=false` | 关闭成片音频 |
+| 返回尾帧 | 顶层 `return_last_frame=true` | 查询结果含尾帧 URL |
+
+---
+
+## 4. content[] 填写规则
+
+### 4.1 单图 / 单视频 / 单音频
+
+```json
+"content": [
+  { "type": "text", "text": "人物缓缓转身微笑" },
+  {
+    "type": "image_url",
+    "image_url": { "url": "https://cdn.example.com/main.png" },
+    "role": "reference_image"
+  }
+]
+```
+
+```json
+"content": [
+  { "type": "text", "text": "转为赛博朋克风格，保留运动轨迹" },
+  {
+    "type": "video_url",
+    "video_url": { "url": "https://cdn.example.com/source.mp4" },
+    "role": "reference_video"
+  }
+]
+```
+
+```json
+"content": [
+  { "type": "text", "text": "根据参考音频生成口型一致的视频" },
+  {
+    "type": "audio_url",
+    "audio_url": { "url": "https://cdn.example.com/voice.mp3" },
+    "role": "reference_audio"
+  }
+]
+```
+
+### 4.2 多参考素材
+
+按顺序追加多个 `image_url` / `video_url` / `audio_url` 对象即可；建议在 `text` 中说明各素材用途。
+
+### 4.3 注意事项
+
+- 地址须为公网可访问的 HTTP/HTTPS URL，或素材库 `asset://{AssetId}`。
+- 图片格式：`.png`、`.jpg`、`.jpeg`、`.webp`。
+- 视频格式：`.mp4`、`.mov`、`.webm`。
+- 音频格式：`.mp3`、`.wav`。
+- 透传模式下**不要**再使用转换模式的 `prompt` + `images` + `metadata.video_urls` 作为主写法；请直接使用官方 `content[]`。
+- `generate_audio` 未传时上游可能按默认开启；需要无声成片时请显式传 `false`。
+
+---
+
+## 5. 文生视频
+
+```bash
+curl -X POST "__apiBaseUrl__/v1/video/generations" \
+  -H "Authorization: Bearer <YOUR_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance2.0-huoshan",
+    "content": [
+      {
+        "type": "text",
+        "text": "黄昏海岸线，电影级光影，慢镜头推进，海浪拍打礁石"
+      }
+    ],
+    "resolution": "720p",
+    "ratio": "16:9",
+    "duration": 5,
+    "generate_audio": true,
+    "watermark": false,
+    "return_last_frame": true
+  }'
+```
+
+**提交成功返回示例：**
+
+```json
+{
+  "id": "task_abc123",
+  "object": "video.generation",
+  "model": "seedance2.0-huoshan",
+  "status": "queued",
+  "progress": 0,
+  "created_at": 1784716366
+}
+```
+
+---
+
+## 6. 图生视频
+
+```bash
+curl -X POST "__apiBaseUrl__/v1/video/generations" \
+  -H "Authorization: Bearer <YOUR_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance2.0-huoshan",
+    "content": [
+      { "type": "text", "text": "人物缓慢转头，背景树叶随风飘动" },
+      {
+        "type": "image_url",
+        "image_url": { "url": "https://cdn.example.com/主角正面照.png" },
+        "role": "reference_image"
+      }
+    ],
+    "resolution": "720p",
+    "ratio": "16:9",
+    "duration": 5
+  }'
+```
+
+---
+
+## 7. 首尾帧生视频（透传专属）
+
+```bash
+curl -X POST "__apiBaseUrl__/v1/video/generations" \
+  -H "Authorization: Bearer <YOUR_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance2.0-huoshan",
+    "content": [
+      { "type": "text", "text": "镜头从首帧平滑过渡到尾帧，保持人物一致性" },
+      {
+        "type": "image_url",
+        "image_url": { "url": "https://cdn.example.com/start.png" },
+        "role": "first_frame"
+      },
+      {
+        "type": "image_url",
+        "image_url": { "url": "https://cdn.example.com/end.png" },
+        "role": "last_frame"
+      }
+    ],
+    "resolution": "720p",
+    "ratio": "16:9",
+    "duration": 5,
+    "generate_audio": true
+  }'
+```
+
+---
+
+## 8. 视频生视频
+
+```bash
+curl -X POST "__apiBaseUrl__/v1/video/generations" \
+  -H "Authorization: Bearer <YOUR_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance2.0-huoshan",
+    "content": [
+      { "type": "text", "text": "转为赛博朋克夜景风格，保留原有运动轨迹" },
+      {
+        "type": "video_url",
+        "video_url": { "url": "https://cdn.example.com/原始素材.mp4" },
+        "role": "reference_video"
+      }
+    ],
+    "resolution": "1080p",
+    "ratio": "16:9",
+    "duration": 8
+  }'
+```
+
+---
+
+## 9. 多参考图 / 多参考视频
+
+### 9.1 多参考图
+
+```bash
+curl -X POST "__apiBaseUrl__/v1/video/generations" \
+  -H "Authorization: Bearer <YOUR_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance2.0-huoshan",
+    "content": [
+      {
+        "type": "text",
+        "text": "保持第一张图的面部特征，参考第二张的服装与配色，整体电影感"
+      },
+      {
+        "type": "image_url",
+        "image_url": { "url": "https://cdn.example.com/角色面部.png" },
+        "role": "reference_image"
+      },
+      {
+        "type": "image_url",
+        "image_url": { "url": "https://cdn.example.com/服装参考.png" },
+        "role": "reference_image"
+      },
+      {
+        "type": "image_url",
+        "image_url": { "url": "https://cdn.example.com/色调参考.png" },
+        "role": "reference_image"
+      }
+    ],
+    "resolution": "720p",
+    "ratio": "16:9",
+    "duration": 5
+  }'
+```
+
+### 9.2 多参考视频
+
+```bash
+curl -X POST "__apiBaseUrl__/v1/video/generations" \
+  -H "Authorization: Bearer <YOUR_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance2.0-huoshan",
+    "content": [
+      {
+        "type": "text",
+        "text": "基于第一个视频的内容，参考第二个视频的运镜节奏与第三个视频的打光氛围"
+      },
+      {
+        "type": "video_url",
+        "video_url": { "url": "https://cdn.example.com/主素材.mp4" },
+        "role": "reference_video"
+      },
+      {
+        "type": "video_url",
+        "video_url": { "url": "https://cdn.example.com/运镜参考.mp4" },
+        "role": "reference_video"
+      },
+      {
+        "type": "video_url",
+        "video_url": { "url": "https://cdn.example.com/打光参考.mp4" },
+        "role": "reference_video"
+      }
+    ],
+    "resolution": "1080p",
+    "ratio": "16:9",
+    "duration": 8
+  }'
+```
+
+---
+
+## 10. 参考音频、成片音频与高级控制
+
+### 10.1 图 + 参考音频（口型/配音）
+
+```bash
+curl -X POST "__apiBaseUrl__/v1/video/generations" \
+  -H "Authorization: Bearer <YOUR_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "doubao-seedance-2-0-260128",
+    "content": [
+      { "type": "text", "text": "根据参考音频生成口型一致的视频" },
+      {
+        "type": "image_url",
+        "image_url": { "url": "https://cdn.example.com/portrait.png" },
+        "role": "reference_image"
+      },
+      {
+        "type": "audio_url",
+        "audio_url": { "url": "https://cdn.example.com/ref.mp3" },
+        "role": "reference_audio"
+      }
+    ],
+    "resolution": "480p",
+    "ratio": "16:9",
+    "duration": 5,
+    "generate_audio": true
+  }'
+```
+
+### 10.2 关闭成片音频（无声视频）
+
+```bash
+curl -X POST "__apiBaseUrl__/v1/video/generations" \
+  -H "Authorization: Bearer <YOUR_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance2.0-huoshan",
+    "content": [
+      { "type": "text", "text": "城市夜景延时摄影，仅画面无配音" }
+    ],
+    "resolution": "720p",
+    "ratio": "16:9",
+    "duration": 5,
+    "generate_audio": false
+  }'
+```
+
+### 10.3 回调 + 尾帧 + 联网搜索 + 安全标识
+
+```bash
+curl -X POST "__apiBaseUrl__/v1/video/generations" \
+  -H "Authorization: Bearer <YOUR_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance2.0-huoshan",
+    "content": [
+      { "type": "text", "text": "根据最新资讯生成海边延时摄影风格短片" }
+    ],
+    "resolution": "720p",
+    "ratio": "16:9",
+    "duration": 5,
+    "generate_audio": true,
+    "callback_url": "https://example.com/hooks/seedance",
+    "return_last_frame": true,
+    "tools": [{"type": "web_search"}],
+    "seed": 20260722,
+    "watermark": false,
+    "safety_identifier": "user-or-tenant-stable-id",
+    "service_tier": "default",
+    "execution_expires_after": 3600
+  }'
+```
+
+| 字段 | 说明 |
+| --- | --- |
+| `content` 中的 `audio_url` | 参考音频输入，影响口型、节奏等；**不等于**成片是否有声 |
+| `generate_audio` | 控制成片是否生成音频 |
+| `safety_identifier` / `priority` | 透传专属高级参数，转换模式不可用 |
+
+---
+
+## 11. 任务查询
+
+查询接口、鉴权与**返回结构与转换模式完全一致**。
+
+```bash
+curl -X GET "__apiBaseUrl__/v1/video/generations/task_horzHtSWWIscRfl3mvCj0ATp9Ve0vfd5" \
+  -H "Authorization: Bearer <YOUR_API_KEY>"
+```
+
+### 11.1 成功返回示例（completed）
+
+```json
+{
+  "completed_at": 1784716518,
+  "content": {
+    "last_frame_url": "https://cdn.example.com/output/task_xxx_last-frame.png",
+    "video_url": "https://cdn.example.com/output/task_xxx.mp4"
+  },
+  "created_at": 1784716366,
+  "duration": 5,
+  "error": null,
+  "id": "task_horzHtSWWIscRfl3mvCj0ATp9Ve0vfd5",
+  "metadata": {
+    "last_frame_url": "https://cdn.example.com/output/task_xxx_last-frame.png"
+  },
+  "model": "seedance2.0-huoshan",
+  "object": "video.generation",
+  "output": {
+    "video_url": "https://cdn.example.com/output/task_xxx.mp4"
+  },
+  "progress": 100,
+  "ratio": "16:9",
+  "resolution": "480p",
+  "status": "completed",
+  "usage": {
+    "completion_tokens": 50638,
+    "total_tokens": 50638
+  }
+}
+```
+
+### 11.2 返回字段说明
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| id | string | 本平台任务 ID |
+| object | string | 固定为 `video.generation` |
+| model | string | 提交时使用的模型名 |
+| status | string | 任务状态，见下表 |
+| progress | integer | 进度百分比，`0`–`100` |
+| created_at | integer | 创建时间（Unix 秒） |
+| completed_at | integer | 完成时间（Unix 秒）；未完成时可能不返回 |
+| error | object \| null | 失败时的错误信息；成功为 `null` |
+| ratio | string | 实际上游生成的画面比例 |
+| resolution | string | 实际上游生成的分辨率 |
+| duration | integer | 实际上游生成的时长（秒） |
+| output.video_url | string | 成片视频地址（平台统一输出字段） |
+| content.video_url | string | 成片视频地址（上游 content 透传，通常与 `output.video_url` 一致） |
+| content.last_frame_url | string | 尾帧图地址；需提交时 `return_last_frame=true` 才有 |
+| metadata.last_frame_url | string | 尾帧图地址的 metadata 副本（可能与 `content.last_frame_url` 相同） |
+| usage.completion_tokens | integer | 上游 completion token 用量 |
+| usage.total_tokens | integer | 上游 total token 用量 |
+
+> **字段关系**：`output.video_url` 与 `content.video_url` 通常指向同一成片；业务侧任取其一即可。`last_frame_url` 可能同时出现在 `content` 与 `metadata`，内容一般相同。
+
+### 11.3 status 枚举
+
+| status | 含义 |
+| --- | --- |
+| queued | 排队中 |
+| in_progress | 生成中 |
+| completed | 成功 |
+| failed | 失败 |
+
+---
+
+## 12. 错误处理
+
+| 场景 | 处理建议 |
+| --- | --- |
+| 未传 `content` 或缺少 `text` | 按官方格式补充 `content[]` |
+| 图生视频缺少 `image_url` | 在 `content` 中补充 `type=image_url` 项 |
+| 视频生视频缺少 `video_url` | 在 `content` 中补充 `type=video_url` 项 |
+| 资源 URL 无法访问 | 确认公网可达、格式正确；或改用素材库 `asset://` |
+| 素材库引用失败 | 确认素材 `Status=Active`，且 `asset://` 属于当前账号 |
+| 鉴权失败 | 检查 API Key |
+| 生成失败 | 简化文本提示或减少参考素材数量 |
+
+---
+
+## 13. 素材库素材怎么用
+
+`content[].*.url` 除了传公网 URL，还可以引用本平台**素材库**中已就绪的素材。
+
+### 13.1 引用格式
+
+```
+asset://{AssetId}
+```
+
+示例：`asset://asset-20260612200812-mmq8g`
+
+| 字段 | 说明 |
+| --- | --- |
+| `asset_id` / `Id` | 素材 ID，如 `asset-xxx` |
+| `asset_uri` | 可直接复制使用的引用地址，格式为 `asset://asset-xxx` |
+| `status` / `Status` | 须为 `Active` 后方可引用 |
+
+### 13.2 使用前准备（二选一）
+
+**方式 A：素材库 Action API**
+
+```
+1. CreateAssetGroup / 真人认证流程 → 获得 GroupId
+2. CreateAsset（公网 URL）       → 获得 AssetId
+3. GetAsset 轮询至 Status=Active
+4. 视频生成时使用 asset://{AssetId}
+```
+
+**方式 B：个人素材 API**
+
+```
+1. POST /api/material/personal/upload
+   或 POST /api/material/personal/upload-url
+2. 取返回的 asset_uri（或自行拼接 asset:// + asset_id）
+3. 确认 status=Active 后用于视频生成
+```
+
+### 13.3 在透传请求中替换地址
+
+把公网 URL **原样替换**为 `asset_uri`，放入对应 content 项的 `url`：
+
+| 素材类型 | content type | 字段路径 |
+| --- | --- | --- |
+| 图片 | `image_url` | `image_url.url` |
+| 视频 | `video_url` | `video_url.url` |
+| 音频 | `audio_url` | `audio_url.url` |
+
+### 13.4 完整示例：素材库图 + 参考音频
+
+```bash
+curl -X POST "__apiBaseUrl__/v1/video/generations" \
+  -H "Authorization: Bearer <YOUR_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedance2.0-huoshan",
+    "content": [
+      { "type": "text", "text": "保持素材库角色面部特征，根据参考音频说话" },
+      {
+        "type": "image_url",
+        "image_url": { "url": "asset://asset-20260612200812-mmq8g" },
+        "role": "reference_image"
+      },
+      {
+        "type": "audio_url",
+        "audio_url": { "url": "asset://asset-20260617155448-fkgww" },
+        "role": "reference_audio"
+      }
+    ],
+    "resolution": "720p",
+    "ratio": "16:9",
+    "duration": 5,
+    "generate_audio": true
+  }'
+```
+
+### 13.5 素材库引用注意
+
+1. **先就绪再引用**：`Pending` 状态不可用，请先轮询至 `Active`。
+2. **账号隔离**：只能引用当前 API Key 所属账号下的素材。
+3. **类型对应**：图片放 `image_url`，视频放 `video_url`，音频放 `audio_url`，不要混放。
+4. **与公网 URL 可混用**：同一请求中可以一部分用 `https://...`，一部分用 `asset://...`。
+5. **完整素材管理接口**：请查阅 [素材库 API（中转站接入）](/zh/docs/api/ai-model/videos/material/relay)、[素材库 API（用户）](/zh/docs/api/ai-model/videos/material/user)。
+
+---
+
+## 14. 快速对照表
+
+| 场景 | content 关键项 | 关键顶层参数 |
+| --- | --- | --- |
+| 文生视频 | `text` | `model` + 规格参数 |
+| 图生视频（单图） | `text` + 1×`image_url` | 可选 `generate_audio` 等 |
+| 首尾帧 | `text` + `first_frame` + `last_frame` | 同上 |
+| 多参考图 | `text` + 多×`image_url` | 同上 |
+| 视频生视频（单视频） | `text` + 1×`video_url` | 同上 |
+| 多参考视频 | `text` + 多×`video_url` | 同上 |
+| 图+视频混合 | `text` + `image_url` + `video_url` | 同上 |
+| 带参考音频 | 另加 `audio_url` | 同上 |
+| 无声成片 | 按场景填写 | `generate_audio=false` |
+| 返回尾帧 | 按场景填写 | `return_last_frame=true` |
+| 素材库引用 | `url` 使用 `asset://...` | 同上 |
+| 安全标识 | 按场景填写 | `safety_identifier` |
+
+

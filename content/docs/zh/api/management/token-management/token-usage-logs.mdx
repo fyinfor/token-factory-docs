@@ -1,0 +1,235 @@
+---
+title: 令牌查询使用日志
+description: 通过 API 令牌（sk-xxx）查询用户或当前令牌的使用日志，支持分页与筛选。
+---
+> **BaseURL**：`__apiBaseUrl__`  
+> **鉴权方式**：用户 API 令牌（`sk-xxx`），请求头携带 `Authorization: Bearer <YOUR_API_KEY>`  
+> **相关接口**：[获取令牌使用情况](/zh/docs/api/management/token-management/usage-token-get) · [个人日志（Session）](/zh/docs/api/management/logs/log-self-get)
+
+本接口面向 **API 令牌鉴权** 场景（如中转站、第三方系统对接），与控制台 Session / 系统访问令牌查询的 `/api/log/self` 不同。
+
+---
+
+## 接口概览
+
+| 接口 | 请求方式 | 路径 | 说明 |
+| --- | --- | --- | --- |
+| 用户使用日志 | GET | `/api/log/user` | 查询当前令牌所属用户的全部使用日志 |
+| 当前令牌使用日志 | GET | `/api/log/token` | 仅查询当前令牌自身的使用日志 |
+
+---
+
+## 通用说明
+
+### 请求头
+
+| 名称 | 必填 | 示例值 | 说明 |
+| --- | --- | --- | --- |
+| `Authorization` | 是 | `Bearer sk-abc123...` | 用户 API 令牌 |
+
+```http
+Authorization: Bearer <YOUR_API_KEY>
+```
+
+### 鉴权规则
+
+| 令牌 / 用户状态 | 是否允许查询 |
+| --- | --- |
+| 令牌正常 | 允许 |
+| 令牌已过期 | 允许 |
+| 令牌额度已耗尽 | 允许 |
+| 令牌已禁用 | 拒绝（HTTP 403） |
+| 用户已被封禁 | 拒绝（HTTP 403） |
+| 令牌无效 / 不存在 | 拒绝（HTTP 401） |
+
+> 令牌过期或额度耗尽后仍可调用本查询接口；已禁用令牌或封禁用户不可查询。
+
+### 通用响应结构
+
+```json
+{
+  "success": true,
+  "message": "",
+  "data": {}
+}
+```
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `success` | boolean | 请求是否成功 |
+| `message` | string | 失败时的错误描述，成功时为空 |
+| `data` | any | 业务数据 |
+
+### 常见错误
+
+| HTTP 状态码 | message | 说明 |
+| --- | --- | --- |
+| 401 | 未提供 Authorization 请求头 | 缺少鉴权头 |
+| 401 | 无效的令牌 | 令牌不存在或无法识别 |
+| 403 | 该令牌已被禁用 | 令牌被管理员/用户禁用 |
+| 403 | 用户已被封禁 | 令牌所属账号已被封禁 |
+
+### 额度说明
+
+日志中的 `quota` 为系统内部额度点数。默认换算关系为：
+
+```
+1 美元 = 500,000 额度点数
+美元金额 = quota ÷ 500000
+```
+
+展示给终端用户时，可按站点汇率将美元换算为本地货币，并保留合适小数位（建议 2～6 位）。更多说明见 [倍率设置](/zh/docs/guide/console/settings/rate-settings)。
+
+---
+
+## 1. 用户使用日志
+
+查询当前令牌所属用户的使用日志（含该用户下所有令牌产生的记录），支持分页与筛选。
+
+### 接口地址
+
+```http
+GET __apiBaseUrl__/api/log/user
+```
+
+### 查询参数
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `p` | int | 否 | 页码，从 1 开始，默认 `1` |
+| `page_size` | int | 否 | 每页条数，默认系统分页大小，最大 `100`（也兼容 `ps` / `size`） |
+| `type` | string | 否 | 日志类型，支持单个或多个（逗号分隔），见下表 |
+| `start_timestamp` | int64 | 否 | 起始时间（Unix 秒） |
+| `end_timestamp` | int64 | 否 | 结束时间（Unix 秒） |
+| `token_name` | string | 否 | 按令牌名称精确筛选 |
+| `model_name` | string | 否 | 按模型名模糊筛选 |
+| `group` | string | 否 | 按分组筛选 |
+| `request_id` | string | 否 | 按请求 ID 精确筛选 |
+| `billing_view` | string | 否 | 传 `raw` 时返回原始结算日志 |
+| `include_raw_billing_logs` | string | 否 | 传 `1` / `true` / `yes` 时等同 `billing_view=raw` |
+
+#### 日志类型 `type`
+
+| 值 | 含义 |
+| --- | --- |
+| `1` | 充值（Topup） |
+| `2` | 消费（Consume） |
+| `3` | 管理（Manage） |
+| `4` | 系统（System） |
+| `5` | 错误（Error） |
+| `6` | 退款（Refund） |
+
+示例：`type=2` 或 `type=2,5`。
+
+### 请求示例
+
+```bash
+curl -X GET "__apiBaseUrl__/api/log/user?p=1&page_size=20&type=2&start_timestamp=1717200000&end_timestamp=1719888000" \
+  -H "Authorization: Bearer <YOUR_API_KEY>"
+```
+
+### 成功响应
+
+```json
+{
+  "success": true,
+  "message": "",
+  "data": {
+    "page": 1,
+    "page_size": 20,
+    "total": 128,
+    "items": [
+      {
+        "id": 1,
+        "user_id": 12,
+        "created_at": 1718000000,
+        "type": 2,
+        "content": "",
+        "username": "demo",
+        "token_name": "default",
+        "model_name": "gpt-4o",
+        "quota": 1250,
+        "prompt_tokens": 100,
+        "completion_tokens": 50,
+        "use_time": 3,
+        "is_stream": true,
+        "channel": 0,
+        "token_id": 34,
+        "group": "default",
+        "ip": "",
+        "request_id": "req_xxx",
+        "other": "{}",
+        "route_slug": "uA1b2c"
+      }
+    ]
+  }
+}
+```
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `page` | int | 当前页码 |
+| `page_size` | int | 每页条数 |
+| `total` | int | 符合条件的总条数 |
+| `items` | array | 日志列表 |
+| `items[].quota` | int | 本条消耗/变动额度（点数），换算见上文 |
+| `items[].type` | int | 日志类型 |
+| `items[].created_at` | int64 | 创建时间（Unix 秒） |
+| `items[].token_name` | string | 令牌名称 |
+| `items[].model_name` | string | 模型名称 |
+| `items[].request_id` | string | 请求 ID |
+| `items[].prompt_tokens` | int | 提示 token 数 |
+| `items[].completion_tokens` | int | 补全 token 数 |
+| `items[].use_time` | int | 耗时（秒） |
+| `items[].is_stream` | boolean | 是否流式请求 |
+| `items[].group` | string | 分组 |
+| `items[].token_id` | int | 令牌 ID |
+
+---
+
+## 2. 当前令牌使用日志
+
+仅返回 **当前请求所用令牌** 产生的使用日志（自动按 `token_id` 限定），筛选条件与用户日志一致（不含 `token_name`）。
+
+### 接口地址
+
+```http
+GET __apiBaseUrl__/api/log/token
+```
+
+### 查询参数
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `p` | int | 否 | 页码，从 1 开始，默认 `1` |
+| `page_size` | int | 否 | 每页条数，最大 `100` |
+| `type` | string | 否 | 日志类型，同用户日志 |
+| `start_timestamp` | int64 | 否 | 起始时间（Unix 秒） |
+| `end_timestamp` | int64 | 否 | 结束时间（Unix 秒） |
+| `model_name` | string | 否 | 按模型名模糊筛选 |
+| `group` | string | 否 | 按分组筛选 |
+| `request_id` | string | 否 | 按请求 ID 精确筛选 |
+| `billing_view` | string | 否 | 传 `raw` 时返回原始结算日志 |
+| `include_raw_billing_logs` | string | 否 | 传 `1` / `true` / `yes` 时等同 `billing_view=raw` |
+
+### 请求示例
+
+```bash
+curl -X GET "__apiBaseUrl__/api/log/token?p=1&page_size=20&type=2" \
+  -H "Authorization: Bearer <YOUR_API_KEY>"
+```
+
+### 成功响应
+
+响应结构与「用户使用日志」相同（分页字段 + `items` 列表）。区别仅在于数据范围：只包含当前令牌的记录。
+
+---
+
+## 对接建议
+
+1. 统一使用 `Authorization: Bearer sk-xxx`，不要使用控制台登录 Session。
+2. 余额 / 消费展示前，用 `quota ÷ 500000` 转为美元，再按需换算本地货币。
+3. 查询时尽量带上 `start_timestamp` / `end_timestamp`，避免一次拉取过大时间范围。
+4. `page_size` 最大为 100；需要全量数据时请循环翻页直至取完。
+5. 若返回「该令牌已被禁用」或「用户已被封禁」，应提示用户更换令牌或联系管理员。
+6. 仅需汇总用量时可配合 [获取令牌使用情况](/zh/docs/api/management/token-management/usage-token-get)（`GET /api/usage/token/`）。

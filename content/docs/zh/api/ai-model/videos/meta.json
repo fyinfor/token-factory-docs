@@ -1,4 +1,9 @@
 {
   "title": "视频（Videos）",
-  "pages": ["createvideogeneration", "getvideogeneration"]
+  "pages": [
+    "createvideogeneration",
+    "getvideogeneration",
+    "seedance",
+    "material"
+  ]
 }

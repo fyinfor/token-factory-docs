@@ -1,0 +1,664 @@
+---
+title: 素材库 API（用户）
+description: 个人素材库接口：虚拟人像与真人素材的上传、查询、删除及真人认证流程。
+---
+> **BaseURL**：`__apiBaseUrl__`  
+> **鉴权**：`Authorization: Bearer <YOUR_API_KEY>`  
+> **数据隔离**：素材按用户隔离，用户之间数据互不互通。  
+> **相关文档**：[中转站接入](/zh/docs/api/ai-model/videos/material/relay) · [Seedance 转换模式](/zh/docs/api/ai-model/videos/seedance/convert)
+
+---
+
+## 一、业务规则
+
+| 场景 | 说明 |
+|------|------|
+| 虚拟人像 | 直接上传 / 查询 / 删除素材，无需认证 |
+| 真人素材 | 先完成真人认证获取 `GroupId`，再上传素材 |
+| 创建素材组 | **不开放**；真人组由认证成功后自动返回 |
+| 删除素材组 | 仅真人，调用删除分组接口 |
+
+### 真人 / 虚拟人 差异
+
+| | 虚拟人像 | 真人素材 |
+|--|----------|----------|
+| 认证 | 不需要 | 需要 H5 实名认证 |
+| 上传 | `agreed=true` + 文件/链接 | 额外必填 `group_id` |
+| 合规协议 | 虚拟人像合规协议 | 真人素材合规协议 |
+| 路径 | `/api/material/personal/*` | `/api/material/personal/real/*` + Action 接口 |
+
+---
+
+## 二、接口一览
+
+### 虚拟人像
+
+| 接口     | 方法     | 路径                                       |
+| ------ | ------ | ---------------------------------------- |
+| 上传（本地） | POST   | `/api/material/personal/upload`          |
+| 上传（链接） | POST   | `/api/material/personal/upload-url`      |
+| 列表     | GET    | `/api/material/personal/assets`          |
+| 详情     | GET    | `/api/material/personal/asset/:asset_id` |
+| 删除     | DELETE | `/api/material/personal/asset/:asset_id` |
+| 修改素材   | POST   | `/api/material?Action=UpdateAsset`       |
+
+### 真人认证（Action）
+
+| 接口 | 方法 | 路径 |
+|------|------|------|
+| 创建会话 | POST | `/api/material?Action=CreateVisualValidateSession` |
+| 查询结果 | POST | `/api/material?Action=GetVisualValidateResult` |
+
+### 真人素材
+
+| 接口     | 方法     | 路径                                             |
+| ------ | ------ | ---------------------------------------------- |
+| 上传（本地） | POST   | `/api/material/personal/real/upload`           |
+| 上传（链接） | POST   | `/api/material/personal/real/upload-url`       |
+| 列表     | GET    | `/api/material/personal/real/assets`           |
+| 详情     | GET    | `/api/material/personal/real/asset/:asset_id`  |
+| 删除素材   | DELETE | `/api/material/personal/real/asset/:asset_id`  |
+| 删除素材组  | DELETE | `/api/material/personal/real/groups/:group_id` |
+| 分组列表   | GET    | `/api/material/personal/real/groups`           |
+| 修改素材组  | POST   | `/api/material?Action=UpdateAssetGroup`        |
+| 修改素材   | POST   | `/api/material?Action=UpdateAsset`             |
+
+---
+
+## 三、通用说明
+
+### 3.1 响应格式
+
+**REST 接口**（`/api/material/personal/*`）：
+
+```json
+{ "success": true, "message": "", "data": {} }
+```
+
+**Action 接口**（`/api/material?Action=xxx`）：
+
+```json
+{ "code": 0, "msg": "success", "data": {} }
+```
+
+| 类型 | 成功 | 失败 |
+|------|------|------|
+| REST | `success=true` | `success=false`，见 `message` |
+| Action | `code=0` | `code≠0`，见 `msg` |
+
+### 3.2 HTTP 状态码
+
+| HTTP | 说明 |
+|------|------|
+| 200 | 正常返回（含业务失败） |
+| 401 | Token 无效 |
+| 403 | 无权访问 |
+
+### 3.3 素材状态
+
+| 值 | 说明 |
+|----|------|
+| `Active` | 可用，可用于视频生成 |
+| `Pending` | 处理中，请轮询详情 |
+| `Failed` | 处理失败 |
+
+**视频引用**：`asset://{asset_id}`
+
+---
+
+## 四、调用流程
+
+### 虚拟人像
+
+```
+上传 → 查询详情（Pending 时轮询至 Active）→ 视频生成引用 asset://{asset_id}
+```
+
+### 真人
+
+```
+CreateVisualValidateSession → 用户完成 H5 认证
+→ GetVisualValidateResult 轮询（3s 间隔，最长 5min）
+→ 获得 GroupId → 上传素材 → 查询详情 → 视频生成引用
+```
+
+---
+
+## 五、虚拟人像接口
+
+### 5.1 上传（本地文件）
+
+```http
+POST __apiBaseUrl__/api/material/personal/upload
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+Content-Type: multipart/form-data
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `file` | File | 是 | 本地图片 / 视频 / 音频文件 |
+| `agreed` | string | 是 | 同意虚拟人像合规协议，固定 `"true"` |
+
+```bash
+curl -X POST __apiBaseUrl__/api/material/personal/upload \
+  -H "Authorization: Bearer <YOUR_API_KEY>xxxxx" \
+  -F "file=@/path/to/portrait.jpg" \
+  -F "agreed=true"
+```
+
+**成功响应**
+
+```json
+{
+  "success": true,
+  "message": "",
+  "data": {
+    "asset_id": "asset-a1b2c3d4",
+    "asset_uri": "asset://asset-a1b2c3d4",
+    "name": "portrait.jpg",
+    "asset_type": "Image",
+    "url": "__apiBaseUrl__/api/uploads/seedance/2026/06/25/xxxxxxxx.jpg",
+    "status": "Active",
+    "created_at": 1750838400
+  }
+}
+```
+
+### 5.2 上传（在线链接）
+
+```http
+POST __apiBaseUrl__/api/material/personal/upload-url
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+Content-Type: application/json
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `url` | string | 是 | `http` / `https` 绝对地址 |
+| `agreed` | boolean | 是 | 固定 `true` |
+| `name` | string | 否 | 素材名称；缺省取链接文件名 |
+| `asset_type` | string | 否 | `Image` / `Video` / `Audio`；缺省按扩展名推断 |
+
+```bash
+curl -X POST __apiBaseUrl__/api/material/personal/upload-url \
+  -H "Authorization: Bearer <YOUR_API_KEY>xxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com/portrait.jpg",
+    "name": "portrait.jpg",
+    "asset_type": "Image",
+    "agreed": true
+  }'
+```
+
+**成功响应**：结构同 5.1（不含 `group_id`）。
+
+### 5.3 列表查询
+
+```http
+GET __apiBaseUrl__/api/material/personal/assets?page=1&page_size=10
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `page` | integer | 否 | 页码，默认 `1` |
+| `page_size` | integer | 否 | 每页条数，默认 `10` |
+
+**成功响应**
+
+```json
+{
+  "success": true,
+  "message": "",
+  "data": {
+    "page": 1,
+    "page_size": 10,
+    "total": 1,
+    "items": [
+      {
+        "asset_id": "asset-a1b2c3d4",
+        "asset_uri": "asset://asset-a1b2c3d4",
+        "name": "portrait.jpg",
+        "asset_type": "Image",
+        "url": "__apiBaseUrl__/api/uploads/...",
+        "status": "Active",
+        "created_at": 1750838400
+      }
+    ]
+  }
+}
+```
+
+### 5.4 详情查询
+
+```http
+GET __apiBaseUrl__/api/material/personal/asset/{asset_id}
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+```
+
+| 参数 | 位置 | 类型 | 必填 | 说明 |
+|------|------|------|------|------|
+| `asset_id` | path | string | 是 | 上传接口返回的素材 ID |
+
+```bash
+curl -X GET __apiBaseUrl__/api/material/personal/asset/asset-a1b2c3d4 \
+  -H "Authorization: Bearer <YOUR_API_KEY>xxxxx"
+```
+
+**成功响应**：结构同 5.1。若 `status=Pending`，会尝试同步上游状态。
+
+### 5.5 删除
+
+```http
+DELETE __apiBaseUrl__/api/material/personal/asset/{asset_id}
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+```
+
+| 参数 | 位置 | 类型 | 必填 | 说明 |
+|------|------|------|------|------|
+| `asset_id` | path | string | 是 | 素材 ID |
+
+```bash
+curl -X DELETE __apiBaseUrl__/api/material/personal/asset/asset-a1b2c3d4 \
+  -H "Authorization: Bearer <YOUR_API_KEY>xxxxx"
+```
+
+**成功响应**
+
+```json
+{
+  "success": true,
+  "message": "",
+  "data": {
+    "asset_id": "asset-a1b2c3d4"
+  }
+}
+```
+
+---
+
+## 六、真人认证接口（Action）
+
+> Action 接口统一地址：`POST /api/material?Action={ActionName}`  
+> Content-Type：`application/json`  
+> 响应格式：`{ "code": 0, "msg": "success", "data": {} }`
+
+### 6.1 CreateVisualValidateSession — 创建认证会话
+
+```http
+POST __apiBaseUrl__/api/material?Action=CreateVisualValidateSession
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+Content-Type: application/json
+```
+
+请求体无需参数，传空对象即可：
+
+```json
+{}
+```
+
+```bash
+curl -X POST "__apiBaseUrl__/api/material?Action=CreateVisualValidateSession" \
+  -H "Authorization: Bearer <YOUR_API_KEY>xxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+**成功响应**
+
+```json
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "BytedToken": "2026062515501465178B138B02A64E1A",
+    "H5Link": "__apiBaseUrl__/real-validate?token=rt_...",
+    "QrCode": "data:image/png;base64,iVBORw..."
+  }
+}
+```
+
+| 字段 | 说明 |
+|------|------|
+| `BytedToken` | 轮询令牌，供 `GetVisualValidateResult` 使用（**禁止展示给终端用户**） |
+| `H5Link` | 真人认证 H5 页面地址（约 5 分钟有效） |
+| `QrCode` | H5 链接二维码（base64 PNG） |
+
+### 6.2 GetVisualValidateResult — 查询认证结果
+
+```http
+POST __apiBaseUrl__/api/material?Action=GetVisualValidateResult
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+Content-Type: application/json
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `BytedToken` | string | 是 | 创建会话时返回的令牌 |
+
+```json
+{
+  "BytedToken": "2026062515501465178B138B02A64E1A"
+}
+```
+
+```bash
+curl -X POST "__apiBaseUrl__/api/material?Action=GetVisualValidateResult" \
+  -H "Authorization: Bearer <YOUR_API_KEY>xxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"BytedToken":"2026062515501465178B138B02A64E1A"}'
+```
+
+**认证成功**
+
+```json
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "GroupId": "group-20260625155055-5h78r",
+    "Status": "success"
+  }
+}
+```
+
+**认证中**
+
+```json
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "Status": "pending"
+  }
+}
+```
+
+**轮询建议**：间隔 **3 秒**，最长约 **5 分钟**。成功后直接使用返回的 `GroupId` 上传真人素材。
+
+---
+
+## 七、真人素材接口
+
+### 7.1 上传（本地文件）
+
+```http
+POST __apiBaseUrl__/api/material/personal/real/upload
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+Content-Type: multipart/form-data
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `group_id` | string | 是 | 认证成功返回的 `GroupId` |
+| `file` | File | 是 | 本地图片 / 视频 / 音频文件 |
+| `agreed` | string | 是 | 同意真人素材合规协议，固定 `"true"` |
+
+```bash
+curl -X POST __apiBaseUrl__/api/material/personal/real/upload \
+  -H "Authorization: Bearer <YOUR_API_KEY>xxxxx" \
+  -F "group_id=group-20260625155055-5h78r" \
+  -F "file=@/path/to/real.jpg" \
+  -F "agreed=true"
+```
+
+**成功响应**
+
+```json
+{
+  "success": true,
+  "message": "",
+  "data": {
+    "asset_id": "asset-e5f6g7h8",
+    "asset_uri": "asset://asset-e5f6g7h8",
+    "group_id": "group-20260625155055-5h78r",
+    "name": "real.jpg",
+    "asset_type": "Image",
+    "url": "__apiBaseUrl__/api/uploads/...",
+    "status": "Active",
+    "created_at": 1750838400
+  }
+}
+```
+
+### 7.2 上传（在线链接）
+
+```http
+POST __apiBaseUrl__/api/material/personal/real/upload-url
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+Content-Type: application/json
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `group_id` | string | 是 | 认证成功返回的 `GroupId` |
+| `url` | string | 是 | 公网可访问的 `http` / `https` 链接 |
+| `agreed` | boolean | 是 | 固定 `true` |
+| `name` | string | 否 | 素材名称；缺省取链接文件名 |
+| `asset_type` | string | 否 | `Image` / `Video` / `Audio`；缺省按扩展名推断 |
+
+```bash
+curl -X POST __apiBaseUrl__/api/material/personal/real/upload-url \
+  -H "Authorization: Bearer <YOUR_API_KEY>xxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "group_id": "group-20260625155055-5h78r",
+    "url": "https://example.com/real.jpg",
+    "name": "real.jpg",
+    "asset_type": "Image",
+    "agreed": true
+  }'
+```
+
+**成功响应**：结构同 7.1。
+
+### 7.3 列表查询
+
+```http
+GET __apiBaseUrl__/api/material/personal/real/assets?group_id=group-xxx&page=1&page_size=10
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `group_id` | string | 否 | 按素材组过滤；不传则返回当前用户全部真人素材 |
+| `page` | integer | 否 | 页码，默认 `1` |
+| `page_size` | integer | 否 | 每页条数，默认 `10` |
+
+### 7.4 详情查询
+
+```http
+GET __apiBaseUrl__/api/material/personal/real/asset/{asset_id}
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+```
+
+| 参数 | 位置 | 类型 | 必填 | 说明 |
+|------|------|------|------|------|
+| `asset_id` | path | string | 是 | 素材 ID |
+
+若 `status=Pending`，会尝试同步上游状态。
+
+### 7.5 删除素材
+
+```http
+DELETE __apiBaseUrl__/api/material/personal/real/asset/{asset_id}
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+```
+
+| 参数 | 位置 | 类型 | 必填 | 说明 |
+|------|------|------|------|------|
+| `asset_id` | path | string | 是 | 素材 ID |
+
+**成功响应**
+
+```json
+{
+  "success": true,
+  "message": "",
+  "data": {
+    "asset_id": "asset-e5f6g7h8"
+  }
+}
+```
+
+### 7.6 分组列表
+
+```http
+GET __apiBaseUrl__/api/material/personal/real/groups
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+```
+
+**成功响应示例**
+
+```json
+{
+  "success": true,
+  "message": "",
+  "data": [
+    {
+      "group_id": "group-20260625155055-5h78r",
+      "group_name": "真人素材组",
+      "description": "",
+      "created_at": 1750838400
+    }
+  ]
+}
+```
+
+### 7.7 删除素材组
+
+```http
+DELETE __apiBaseUrl__/api/material/personal/real/groups/{group_id}
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+```
+
+| 参数 | 位置 | 类型 | 必填 | 说明 |
+|------|------|------|------|------|
+| `group_id` | path | string | 是 | 素材组 ID |
+
+**成功响应**
+
+```json
+{
+  "success": true,
+  "message": "",
+  "data": {
+    "group_id": "group-20260625155055-5h78r"
+  }
+}
+```
+
+### 7.8 UpdateAssetGroup — 修改素材组（Action）
+
+```http
+POST __apiBaseUrl__/api/material?Action=UpdateAssetGroup
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+Content-Type: application/json
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `Id` | string | 是 | 素材组 ID |
+| `Name` | string | 否 | 新名称（与 `Description` 至少填一项） |
+| `Description` | string | 否 | 新描述 |
+
+```json
+{
+  "Id": "group-20260625155055-5h78r",
+  "Name": "新名称",
+  "Description": "新描述"
+}
+```
+
+```bash
+curl -X POST "__apiBaseUrl__/api/material?Action=UpdateAssetGroup" \
+  -H "Authorization: Bearer <YOUR_API_KEY>xxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "Id": "group-20260625155055-5h78r",
+    "Name": "新名称",
+    "Description": "新描述"
+  }'
+```
+
+**成功响应**
+
+```json
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "Id": "group-20260625155055-5h78r"
+  }
+}
+```
+
+### 7.9 UpdateAsset — 修改素材（Action）
+
+```http
+POST __apiBaseUrl__/api/material?Action=UpdateAsset
+Authorization: Bearer <YOUR_API_KEY>xxxxx
+Content-Type: application/json
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `Id` | string | 是 | 素材 ID |
+| `Name` | string | 是 | 新素材名称 |
+
+```json
+{
+  "Id": "asset-e5f6g7h8",
+  "Name": "new-name"
+}
+```
+
+```bash
+curl -X POST "__apiBaseUrl__/api/material?Action=UpdateAsset" \
+  -H "Authorization: Bearer <YOUR_API_KEY>xxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "Id": "asset-e5f6g7h8",
+    "Name": "new-name"
+  }'
+```
+
+**成功响应**
+
+```json
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "Id": "asset-e5f6g7h8"
+  }
+}
+```
+
+---
+
+## 八、字段说明
+
+| 字段 | 说明 |
+|------|------|
+| `asset_id` | 素材唯一标识；删除 / 查询 / 视频引用均使用 |
+| `asset_uri` | `asset://{asset_id}` |
+| `group_id` / `GroupId` | 真人素材组 ID（认证成功返回；仅真人接口使用） |
+| `asset_type` | `Image` / `Video` / `Audio` |
+| `status` / `Status` | `Active` / `Pending` / `Failed` |
+| `created_at` | 创建时间戳（秒） |
+| `BytedToken` | 真人认证轮询令牌（勿展示给终端用户） |
+
+---
+
+## 九、注意事项
+
+1. 上传须携带 `agreed=true`。
+2. 支持格式：图片 `jpg/jpeg/png/webp/gif/bmp`，视频 `mp4/mov/webm/mkv/avi/m4v`，音频 `mp3/wav`。
+3. 单文件大小默认最大 10MB（以运营配置为准）。
+4. `Pending` 状态请轮询详情接口，确认 `Active` 后再用于视频生成。
+5. 真人认证使用 Action 接口；`BytedToken` 仅供后端轮询，禁止展示给用户。
+6. 真人分组 / 素材改名使用 Action：`UpdateAssetGroup` / `UpdateAsset`。
+
+

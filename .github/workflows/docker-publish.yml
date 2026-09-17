@@ -101,6 +101,10 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          # ACR 不支持 OCI empty/provenance attestations，需关闭否则 push 报
+          # denied: unknown manifest class for application/vnd.oci.empty.v1+json
+          provenance: false
+          sbom: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

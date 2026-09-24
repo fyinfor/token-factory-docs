@@ -1,6 +1,6 @@
 {
-  "title": "商务合作",
-  "description": "商务合作与联系方式",
+  "title": "联系我们",
+  "description": "联系方式与商务合作",
   "root": true,
   "icon": "Handshake",
   "pages": ["index"]

@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "原生OpenAI格式",
+    "title": "OpenAI Moderations 格式",
     "version": "1.0.0",
     "description": "检查文本内容是否违反使用政策"
   },
@@ -25,7 +25,7 @@
         "tags": [
           "审查（Moderations）"
         ],
-        "summary": "原生OpenAI格式",
+        "summary": "OpenAI Moderations 格式",
         "description": "检查文本内容是否违反使用政策",
         "operationId": "createmoderation",
         "parameters": [],

@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "原生Gemini格式",
+    "title": "历史引擎嵌入入口",
     "version": "1.0.0",
-    "description": "使用指定引擎/模型创建嵌入"
+    "description": "历史兼容路径，不是 Gemini 原生嵌入协议。新接入请使用 /v1/embeddings 或 Gemini 的 :embedContent / :batchEmbedContents；不要仅根据此路径推断支持的请求格式。"
   },
   "tags": [
     {
@@ -25,8 +25,8 @@
         "tags": [
           "嵌入（Embeddings）"
         ],
-        "summary": "原生Gemini格式",
-        "description": "使用指定引擎/模型创建嵌入",
+        "summary": "历史引擎嵌入入口",
+        "description": "历史兼容路径，不是 Gemini 原生嵌入协议。新接入请使用 /v1/embeddings 或 Gemini 的 :embedContent / :batchEmbedContents；不要仅根据此路径推断支持的请求格式。",
         "operationId": "createengineembedding",
         "parameters": [
           {

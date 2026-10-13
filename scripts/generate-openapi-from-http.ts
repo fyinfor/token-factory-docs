@@ -1,6 +1,7 @@
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { readFile } from 'node:fs/promises';
+import { supplementAiModelSchemas } from './lib/ai-model-protocols';
 
 type HttpTxtRoot = {
   success: boolean;
@@ -567,6 +568,7 @@ async function main() {
     count++;
   }
 
+  await supplementAiModelSchemas(outRoot);
   console.log(
     `✅ Generated ${count} per-endpoint OpenAPI files into ${outRoot}`
   );

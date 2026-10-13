@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "原生OpenAI格式",
+    "title": "OpenAI Completions 格式（传统文本补全）",
     "version": "1.0.0",
-    "description": "基于给定提示创建文本补全"
+    "description": "传统文本补全协议。请求使用 model 和 prompt，返回 choices[].text；不是使用 messages 的 Chat Completions 协议。stream=true 时返回 SSE。是否可用取决于模型及渠道对传统补全的支持。"
   },
   "tags": [
     {
@@ -25,8 +25,8 @@
         "tags": [
           "补全（Completions）"
         ],
-        "summary": "原生OpenAI格式",
-        "description": "基于给定提示创建文本补全",
+        "summary": "OpenAI Completions 格式（传统文本补全）",
+        "description": "传统文本补全协议。请求使用 model 和 prompt，返回 choices[].text；不是使用 messages 的 Chat Completions 协议。stream=true 时返回 SSE。是否可用取决于模型及渠道对传统补全的支持。",
         "operationId": "createcompletion",
         "parameters": [],
         "requestBody": {

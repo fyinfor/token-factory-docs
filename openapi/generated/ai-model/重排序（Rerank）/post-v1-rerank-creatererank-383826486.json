@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "文档重排序",
+    "title": "Rerank 重排序格式（非 OpenAI 标准）",
     "version": "1.0.0",
     "description": "根据查询对文档列表进行相关性重排序"
   },
@@ -25,7 +25,7 @@
         "tags": [
           "重排序（Rerank）"
         ],
-        "summary": "文档重排序",
+        "summary": "Rerank 重排序格式（非 OpenAI 标准）",
         "description": "根据查询对文档列表进行相关性重排序",
         "operationId": "creatererank",
         "parameters": [],

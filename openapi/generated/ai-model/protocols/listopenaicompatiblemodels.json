@@ -1,0 +1,91 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OpenAI 兼容模型列表入口",
+    "version": "1.0.0",
+    "description": "兼容模型列表路径，返回 OpenAI data 数组和 object=list，不返回 Gemini models 数组。可使用 Bearer、x-goog-api-key 或 key 查询参数进行平台令牌鉴权。此路径仅提供模型列表，不表示支持 /v1beta/openai/chat/completions。"
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "GeminiApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-goog-api-key"
+      },
+      "GeminiQueryKey": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "key"
+      },
+      "AnthropicApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  },
+  "paths": {
+    "/v1beta/openai/models": {
+      "get": {
+        "operationId": "listopenaicompatiblemodels",
+        "tags": [
+          "模型（Models）/列出模型"
+        ],
+        "summary": "OpenAI 兼容模型列表入口",
+        "description": "兼容模型列表路径，返回 OpenAI data 数组和 object=list，不返回 Gemini models 数组。可使用 Bearer、x-goog-api-key 或 key 查询参数进行平台令牌鉴权。此路径仅提供模型列表，不表示支持 /v1beta/openai/chat/completions。",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "GeminiApiKey": []
+          },
+          {
+            "GeminiQueryKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "object": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "object": {
+                            "type": "string"
+                          },
+                          "created": {
+                            "type": "integer"
+                          },
+                          "owned_by": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

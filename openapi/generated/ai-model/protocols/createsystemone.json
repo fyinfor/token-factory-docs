@@ -1,0 +1,86 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "System One / Jev 原生格式",
+    "version": "1.0.0",
+    "description": "原生结构化判断协议，使用 model、state 和 questions，不使用 messages 或 prompt 补全结构。默认保留原生扩展字段及响应；渠道配置可映射 model 或覆盖请求参数。非流式；需匹配支持该协议的渠道。"
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "GeminiApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-goog-api-key"
+      },
+      "GeminiQueryKey": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "key"
+      },
+      "AnthropicApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  },
+  "paths": {
+    "/v1/systemone": {
+      "post": {
+        "operationId": "createsystemone",
+        "tags": [
+          "聊天（Chat）"
+        ],
+        "summary": "System One / Jev 原生格式",
+        "description": "原生结构化判断协议，使用 model、state 和 questions，不使用 messages 或 prompt 补全结构。默认保留原生扩展字段及响应；渠道配置可映射 model 或覆盖请求参数。非流式；需匹配支持该协议的渠道。",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "description": "原生状态数据，具体结构由上游协议定义。"
+                  },
+                  "questions": {
+                    "description": "原生问题定义，具体结构由上游协议定义。"
+                  }
+                },
+                "required": [
+                  "model"
+                ],
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

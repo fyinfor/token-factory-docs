@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "ChatCompletions格式",
+    "title": "OpenAI Chat Completions 格式",
     "version": "1.0.0",
     "description": "根据对话历史创建模型响应。支持流式和非流式响应。\n\n兼容 OpenAI Chat Completions API。\n\n**多模态支持**：\n- `image_url`: 图片输入，支持 URL 或 Base64 (data:image/jpeg;base64,xxx)，可选 detail 参数 (low/high/auto)\n- `input_audio`: 音频输入，包含 data (Base64) 和 format (wav/mp3)\n- `video_url`: 视频输入，通过 URL 传入\n- `file`: 文件输入，支持 filename、file_data (Base64)、file_id\n\n支持组合多种模态内容同时传入。"
   },
@@ -25,7 +25,7 @@
         "tags": [
           "聊天（Chat）/原生OpenAI格式"
         ],
-        "summary": "ChatCompletions格式",
+        "summary": "OpenAI Chat Completions 格式",
         "description": "根据对话历史创建模型响应。支持流式和非流式响应。\n\n兼容 OpenAI Chat Completions API。\n",
         "operationId": "createchatcompletion",
         "parameters": [],

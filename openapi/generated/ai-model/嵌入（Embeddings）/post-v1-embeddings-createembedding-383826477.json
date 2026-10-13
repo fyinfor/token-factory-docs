@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "原生OpenAI格式",
+    "title": "OpenAI Embeddings 格式",
     "version": "1.0.0",
     "description": "将文本转换为向量嵌入"
   },
@@ -25,7 +25,7 @@
         "tags": [
           "嵌入（Embeddings）"
         ],
-        "summary": "原生OpenAI格式",
+        "summary": "OpenAI Embeddings 格式",
         "description": "将文本转换为向量嵌入",
         "operationId": "createembedding",
         "parameters": [],

@@ -1,0 +1,163 @@
+---
+title: 接口协议总览
+description: AI 模型接口的通用请求结构、鉴权、流式方式和兼容边界
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+这里的“协议”指客户端使用的 HTTP 路径、请求体和响应体约定，不等同于模型供应商。相同模型能否使用某个协议，取决于平台的模型配置、可用渠道及上游能力。
+
+“OpenAI 格式”“Anthropic 格式”“Gemini 格式”表示客户端接口兼容相应协议，**不保证请求一定以原生格式发送给同名供应商**。渠道可能原生转发，也可能进行协议转换。
+
+## 文本与对话
+
+| 协议                                                          | 请求入口                                                    | 主要输入                                         | 主要输出                               | 流式方式                     |
+| ------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------ | -------------------------------------- | ---------------------------- |
+| [OpenAI Chat Completions](./chat/openai/createchatcompletion) | `POST /v1/chat/completions`                                 | `model`、`messages`                              | `choices[].message`                    | `stream=true`，SSE           |
+| [OpenAI Responses](./chat/openai/createresponse)              | `POST /v1/responses`                                        | `model`、`input`，可选 `instructions`            | `output`、`usage`                      | `stream=true`，具名 SSE 事件 |
+| [Responses 压缩](./chat/openai/compactresponse)               | `POST /v1/responses/compact`                                | `model`、对话上下文                              | `object=response.compaction`、`output` | 非流式                       |
+| [Anthropic Messages](./chat/createmessage)                    | `POST /v1/messages`                                         | `model`、`messages`、`max_tokens`，可选 `system` | `content[]`、`stop_reason`、`usage`    | `stream=true`，具名 SSE 事件 |
+| [Gemini 生成](./chat/gemini/geminirelayv1beta)                | `POST /v1beta/models/{model}:generateContent`               | `contents[].parts`，模型在路径中                 | `candidates[].content.parts`           | 非流式                       |
+| [Gemini 流式生成](./chat/gemini/streamgeneratecontent)        | `POST /v1beta/models/{model}:streamGenerateContent?alt=sse` | 同 Gemini 生成                                   | Gemini 生成结果事件                    | 必须设置 `alt=sse`           |
+| [OpenAI Completions](./completions/createcompletion)          | `POST /v1/completions`                                      | `model`、`prompt`                                | `choices[].text`                       | `stream=true`，SSE           |
+| [System One / Jev](./chat/createsystemone)                    | `POST /v1/systemone`                                        | `model`、原生 `state`、`questions`               | 原生结构化判断结果                     | 非流式                       |
+
+`/v1/completions` 是传统文本补全协议，不是聊天接口。`prompt`、`messages`、`input`、`contents` 不能直接互换。
+
+System One / Jev 还提供 [`POST /api/alpha/decisions`](./chat/createdecision) 兼容入口，使用同一转发链路及平台 API Key。
+
+### 最小请求结构
+
+以下只展示各协议通用的文本输入形状。`<MODEL_ID>` 应替换为平台允许访问且支持该协议的模型 ID。
+
+<Tabs items={['Chat Completions', 'Responses', 'Messages', 'Gemini', 'Completions']}>
+  <Tab value="Chat Completions">
+```json
+{
+  "model": "<MODEL_ID>",
+  "messages": [{ "role": "user", "content": "你好" }]
+}
+```
+  </Tab>
+  <Tab value="Responses">
+```json
+{
+  "model": "<MODEL_ID>",
+  "input": "你好"
+}
+```
+  </Tab>
+  <Tab value="Messages">
+```json
+{
+  "model": "<MODEL_ID>",
+  "max_tokens": 256,
+  "messages": [{ "role": "user", "content": "你好" }]
+}
+```
+  </Tab>
+  <Tab value="Gemini">
+```json
+{
+  "contents": [{ "role": "user", "parts": [{ "text": "你好" }] }]
+}
+```
+  </Tab>
+  <Tab value="Completions">
+```json
+{
+  "model": "<MODEL_ID>",
+  "prompt": "你好"
+}
+```
+  </Tab>
+</Tabs>
+
+## 嵌入与重排序
+
+| 协议                                               | 请求入口                                         | 输入                          | 输出                              |
+| -------------------------------------------------- | ------------------------------------------------ | ----------------------------- | --------------------------------- |
+| [OpenAI Embeddings](./embeddings/createembedding)  | `POST /v1/embeddings`                            | `model`、`input`              | `data[].embedding`                |
+| [Gemini 单条嵌入](./embeddings/embedcontent)       | `POST /v1beta/models/{model}:embedContent`       | `content.parts`               | `embedding.values`                |
+| [Gemini 批量嵌入](./embeddings/batchembedcontents) | `POST /v1beta/models/{model}:batchEmbedContents` | `requests[].content.parts`    | `embeddings[].values`             |
+| [Rerank](./rerank/creatererank)                    | `POST /v1/rerank`                                | `model`、`query`、`documents` | `results`，含相关性分数与文档索引 |
+
+这些接口不使用对话生成的 SSE 协议。Rerank 是独立的重排序协议，不是 OpenAI 标准 API。历史 `/v1/engines/{model}/embeddings` 入口不要当作 Gemini 原生嵌入接口使用；新接入优先选择上表中的嵌入协议。
+
+## 图像、音频与实时
+
+| 接口                                                   | 请求入口                                       | 通用约定                                                     |
+| ------------------------------------------------------ | ---------------------------------------------- | ------------------------------------------------------------ |
+| [图像生成](./images/openai/post-v1-images-generations) | `POST /v1/images/generations`                  | OpenAI 图像请求；`model`、`prompt`，返回 `data`              |
+| [图像编辑](./images/openai/post-v1-images-edits)       | `POST /v1/images/edits`                        | 使用该接口定义的图像输入及编辑参数，不能直接复用文本补全请求 |
+| [语音转录](./audio/openai/createtranscription)         | `POST /v1/audio/transcriptions`                | 通常为 multipart 的 `model`、`file`，返回识别文本            |
+| [语音翻译](./audio/openai/createtranslation)           | `POST /v1/audio/translations`                  | 通常为 multipart 的 `model`、`file`，返回翻译文本            |
+| [语音合成](./audio/openai/createspeech)                | `POST /v1/audio/speech`                        | `model`、`input`、`voice`，通常返回音频字节                  |
+| [异步转录提交](./audio/createasrtask)                  | `POST /v1/audio/transcriptions/async`          | 平台扩展协议，返回 `task_id`                                 |
+| [异步转录查询](./audio/getasrtask)                     | `GET /v1/audio/transcriptions/async/{task_id}` | 轮询任务状态，完成后读取文本                                 |
+| [Realtime](./realtime/createrealtimesession)           | `GET /v1/realtime?model={model}`               | WebSocket 协议升级，使用 `wss://`，不是普通 HTTP GET 或 SSE  |
+
+Gemini 多模态输入、图像及音频生成沿用 `contents/parts` 生成协议，具体输出模态与可选字段按模型能力设置。各模型的特有参数、媒体格式及扩展行为请查阅对应专项文档。
+
+异步转录不是 OpenAI 原生标准端点，只能在支持该能力的渠道上使用；普通转录接口命中异步 ASR 渠道时，平台也可内部轮询并同步返回结果。
+
+## 视频与任务协议
+
+| 协议                                               | 创建                                                          | 查询                                               |
+| -------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------- |
+| [平台统一视频任务](./videos/createvideogeneration) | `POST /v1/video/generations`                                  | `GET /v1/video/generations/{task_id}`              |
+| [OpenAI 视频格式](./videos/sora/createvideo)       | `POST /v1/videos`                                             | `GET /v1/videos/{task_id}`                         |
+| 视频内容                                           | 不适用                                                        | `GET /v1/videos/{task_id}/content`                 |
+| 视频 Remix                                         | `POST /v1/videos/{video_id}/remix`                            | 沿用视频任务查询，需上游支持                       |
+| 方舟 Contents 任务入口                             | `POST /api/v3/contents/generations/tasks`                     | `GET /api/v3/contents/generations/tasks/{task_id}` |
+| Midjourney Proxy                                   | `POST /mj/submit/{action}`，仅限已注册动作                    | `GET /mj/task/{id}/fetch`                          |
+| Suno 任务                                          | `POST /suno/submit/{action}`，`action` 为 `music` 或 `lyrics` | `GET /suno/fetch/{id}` 或 `POST /suno/fetch`       |
+
+视频任务通常使用“创建后轮询”，不是聊天流式协议。`/v2/video/generations`、`/v3/video/generations` 与 `/v1/video/generations` 共用任务转发；`/v1/videos/generations` 也提供创建与查询入口，但不能仅凭路径假定不同渠道的字段完全相同。
+
+Midjourney Proxy 和 Suno 是独立任务协议，不属于 OpenAI 图像或音频协议。可灵、即梦、Seedance、素材库等个别协议差异及参数说明集中在[视频接口](./videos/createvideogeneration)及其专项文档，这里不重复展开。
+
+## 模型列表与审查
+
+| 接口                                                     | 路径                        | 说明                                                                              |
+| -------------------------------------------------------- | --------------------------- | --------------------------------------------------------------------------------- |
+| [模型列表](./models/list/listmodels)                     | `GET /v1/models`            | 默认 OpenAI 格式；同时提供 `x-api-key` 和 `anthropic-version` 时为 Anthropic 格式 |
+| [Gemini 模型列表](./models/list/listmodelsgemini)        | `GET /v1beta/models`        | Gemini `models` 数组                                                              |
+| [兼容模型列表](./models/list/listopenaicompatiblemodels) | `GET /v1beta/openai/models` | OpenAI `data` 数组；只提供列表入口                                                |
+| [模型详情](./models/retrievemodel)                       | `GET /v1/models/{model}`    | OpenAI / Anthropic 返回格式按请求头选择                                           |
+| [内容审查](./moderations/createmoderation)               | `POST /v1/moderations`      | OpenAI Moderations 请求，使用 `model`、`input`                                    |
+
+模型列表经过账号和令牌权限过滤。模型出现在列表中，不代表它支持上表中的全部协议、工具或模态。
+
+## 鉴权与地址
+
+通用鉴权使用平台颁发的 API Key，不是直接填写上游供应商的 Key：
+
+```http
+Authorization: Bearer <YOUR_API_KEY>
+```
+
+| 客户端协议                              | 其他支持的鉴权方式                                                                    |
+| --------------------------------------- | ------------------------------------------------------------------------------------- |
+| Anthropic Messages、Anthropic 模型查询  | `x-api-key: <YOUR_API_KEY>`；模型查询还需 `anthropic-version` 选择 Anthropic 返回格式 |
+| Gemini `/v1beta/models` 及生成/嵌入入口 | `x-goog-api-key: <YOUR_API_KEY>` 或 `?key=<YOUR_API_KEY>`                             |
+| Realtime                                | WebSocket 握手的 Bearer 鉴权；浏览器子协议形式须遵循接口定义                          |
+
+`x-goog-api-key` 和 `key` 不适用于任意路径；`/v1/models` 的列表路由虽有 Gemini 格式分支，新接入仍应使用 `/v1beta/models`，避免格式选择与鉴权入口混用。
+
+JSON 请求设置 `Content-Type: application/json`；文件上传使用 multipart/form-data 并由客户端自动生成 boundary。直接 HTTP 请求的完整地址为平台 API 基础地址加上接口路径；使用 SDK 时注意它是否会自动追加 `/v1`，避免重复拼接。
+
+## 流式与兼容边界
+
+- Chat Completions / Completions 使用 `stream=true`。文本增量分别位于 `choices[].delta` / `choices[].text`；不要将两种结构混用。
+- Responses 和 Messages 使用具名 SSE 事件，不要用 Chat Completions 的 chunk 解析器读取。
+- Gemini 必须使用 `alt=sse` 开启流式模式，读取每个事件里的 Gemini 结果；不能只设置 JSON 的 `stream` 字段。
+- Realtime 使用 WebSocket 双向消息；视频、异步转录等任务使用轮询。它们都不是 SSE。
+- 上游不原生支持 Responses / Messages 时，管理员可配置转换为 Chat Completions；客户端仍按原请求协议读取结果。配置模式为 `auto`、`native_only` 或 `convert_only`，不是客户端请求字段。
+- 协议转换只覆盖可明确映射的文本、图片及函数工具调用。Responses 的存储会话、`previous_response_id`、托管工具等，以及 Messages 的 `cache_control`、思考块等需要原生支持；不能假设转换保留全部语义。
+- 严格请求体透传不能同时进行协议转换。Responses 压缩也不走上述回退；能力不满足时可能返回 `protocol_capability_unavailable`。
+- HTTP 状态与错误体都应检查。不同原生协议和任务接口的错误结构可能不同，不能统一假定都有 OpenAI 的 `error` 结构。
+
+## 尚未实现
+
+注册路由不等于功能可用。当前文件上传/查询/删除 `/v1/files`、旧版微调 `/v1/fine-tunes`、图像变体 `/v1/images/variations`、模型删除 `DELETE /v1/models/{model}` 属于未实现接口，不应作为可用协议接入。它们也不意味着平台提供 OpenAI 托管文件、批处理或完整会话存储能力。

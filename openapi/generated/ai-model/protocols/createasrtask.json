@@ -1,0 +1,184 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "异步语音转录（平台扩展）",
+    "version": "1.0.0",
+    "description": "平台异步任务协议，不是 OpenAI 标准端点。需要支持异步 ASR 的渠道；提交后使用 task_id 查询，不返回 SSE。JSON 提交 audio_url 或 file_url；multipart 也可提交 file，由平台上传后获取可访问的音频 URL。文件上传依赖附件存储配置。"
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "GeminiApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-goog-api-key"
+      },
+      "GeminiQueryKey": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "key"
+      },
+      "AnthropicApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  },
+  "paths": {
+    "/v1/audio/transcriptions/async": {
+      "post": {
+        "operationId": "createasrtask",
+        "tags": [
+          "音频（Audio）"
+        ],
+        "summary": "异步语音转录（平台扩展）",
+        "description": "平台异步任务协议，不是 OpenAI 标准端点。需要支持异步 ASR 的渠道；提交后使用 task_id 查询，不返回 SSE。JSON 提交 audio_url 或 file_url；multipart 也可提交 file，由平台上传后获取可访问的音频 URL。文件上传依赖附件存储配置。",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "task_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "running",
+                        "succeeded",
+                        "failed"
+                      ]
+                    },
+                    "model": {
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "task_id",
+                    "status",
+                    "model",
+                    "created_at"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string"
+                  },
+                  "audio_url": {
+                    "type": "string",
+                    "description": "上游可访问的音频 URL，与 file_url 二选一。"
+                  },
+                  "file_url": {
+                    "type": "string",
+                    "description": "audio_url 的兼容字段。"
+                  },
+                  "language": {
+                    "type": "string"
+                  },
+                  "response_format": {
+                    "type": "string"
+                  },
+                  "diarization_enabled": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "model"
+                ],
+                "anyOf": [
+                  {
+                    "required": [
+                      "audio_url"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "file_url"
+                    ]
+                  }
+                ]
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string"
+                  },
+                  "audio_url": {
+                    "type": "string",
+                    "description": "上游可访问的音频 URL，与 file_url 二选一。"
+                  },
+                  "file_url": {
+                    "type": "string",
+                    "description": "audio_url 的兼容字段。"
+                  },
+                  "language": {
+                    "type": "string"
+                  },
+                  "response_format": {
+                    "type": "string"
+                  },
+                  "diarization_enabled": {
+                    "type": "boolean"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "model"
+                ],
+                "anyOf": [
+                  {
+                    "required": [
+                      "audio_url"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "file_url"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "file"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

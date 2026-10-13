@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "原生OpenAI格式",
+    "title": "模型列表（按客户端协议选择格式）",
     "version": "1.0.0",
-    "description": "获取当前可用的模型列表。\n\n根据请求头自动识别返回格式：\n- 包含 `x-api-key` 和 `anthropic-version` 头时返回 Anthropic 格式\n- 包含 `x-goog-api-key` 头或 `key` 查询参数时返回 Gemini 格式\n- 其他情况返回 OpenAI 格式\n"
+    "description": "默认返回 OpenAI data 数组；同时提供 x-api-key 和 anthropic-version 时返回 Anthropic data/has_more/first_id/last_id。Gemini 模型列表建议使用 /v1beta/models。列表受账号、令牌及模型可见性限制，不代表每个模型支持全部协议。"
   },
   "tags": [
     {
@@ -14,8 +14,22 @@
     "securitySchemes": {
       "BearerAuth": {
         "type": "http",
-        "scheme": "bearer",
-        "description": "使用 Bearer Token 认证。\n格式: `Authorization: Bearer sk-xxxxxx`\n"
+        "scheme": "bearer"
+      },
+      "GeminiApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-goog-api-key"
+      },
+      "GeminiQueryKey": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "key"
+      },
+      "AnthropicApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
       }
     }
   },
@@ -25,8 +39,8 @@
         "tags": [
           "模型（Models）/列出模型"
         ],
-        "summary": "原生OpenAI格式",
-        "description": "获取当前可用的模型列表。\n\n根据请求头自动识别返回格式：\n- 包含 `x-api-key` 和 `anthropic-version` 头时返回 Anthropic 格式\n- 包含 `x-goog-api-key` 头或 `key` 查询参数时返回 Gemini 格式\n- 其他情况返回 OpenAI 格式\n",
+        "summary": "模型列表（按客户端协议选择格式）",
+        "description": "默认返回 OpenAI data 数组；同时提供 x-api-key 和 anthropic-version 时返回 Anthropic data/has_more/first_id/last_id。Gemini 模型列表建议使用 /v1beta/models。列表受账号、令牌及模型可见性限制，不代表每个模型支持全部协议。",
         "operationId": "listmodels",
         "parameters": [
           {
@@ -72,6 +86,9 @@
         "security": [
           {
             "BearerAuth": []
+          },
+          {
+            "AnthropicApiKey": []
           }
         ],
         "responses": {
@@ -80,57 +97,95 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "object": {
-                      "type": "string",
-                      "examples": [
-                        "list"
-                      ]
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "description": "模型 ID",
-                            "examples": [
-                              "gpt-4"
-                            ]
-                          },
-                          "object": {
-                            "type": "string",
-                            "description": "对象类型",
-                            "examples": [
-                              "model"
-                            ]
-                          },
-                          "created": {
-                            "type": "integer",
-                            "description": "创建时间戳"
-                          },
-                          "owned_by": {
-                            "type": "string",
-                            "description": "模型所有者",
-                            "examples": [
-                              "openai"
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "object": {
+                          "type": "string",
+                          "examples": [
+                            "list"
+                          ]
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "模型 ID",
+                                "examples": [
+                                  "gpt-4"
+                                ]
+                              },
+                              "object": {
+                                "type": "string",
+                                "description": "对象类型",
+                                "examples": [
+                                  "model"
+                                ]
+                              },
+                              "created": {
+                                "type": "integer",
+                                "description": "创建时间戳"
+                              },
+                              "owned_by": {
+                                "type": "string",
+                                "description": "模型所有者",
+                                "examples": [
+                                  "openai"
+                                ]
+                              }
+                            },
+                            "x-apifox-orders": [
+                              "id",
+                              "object",
+                              "created",
+                              "owned_by"
                             ]
                           }
+                        }
+                      },
+                      "x-apifox-orders": [
+                        "object",
+                        "data"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string"
+                              },
+                              "display_name": {
+                                "type": "string"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              }
+                            }
+                          }
                         },
-                        "x-apifox-orders": [
-                          "id",
-                          "object",
-                          "created",
-                          "owned_by"
-                        ]
+                        "has_more": {
+                          "type": "boolean"
+                        },
+                        "first_id": {
+                          "type": "string"
+                        },
+                        "last_id": {
+                          "type": "string"
+                        }
                       }
                     }
-                  },
-                  "x-apifox-orders": [
-                    "object",
-                    "data"
                   ]
                 }
               }

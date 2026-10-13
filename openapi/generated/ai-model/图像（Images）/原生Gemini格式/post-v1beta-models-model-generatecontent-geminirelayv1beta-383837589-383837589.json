@@ -14,8 +14,22 @@
     "securitySchemes": {
       "BearerAuth": {
         "type": "http",
-        "scheme": "bearer",
-        "description": "使用 Bearer Token 认证。\n格式: `Authorization: Bearer sk-xxxxxx`\n"
+        "scheme": "bearer"
+      },
+      "GeminiApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-goog-api-key"
+      },
+      "GeminiQueryKey": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "key"
+      },
+      "AnthropicApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
       }
     }
   },
@@ -145,6 +159,12 @@
         "security": [
           {
             "BearerAuth": []
+          },
+          {
+            "GeminiApiKey": []
+          },
+          {
+            "GeminiQueryKey": []
           }
         ],
         "responses": {

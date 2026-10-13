@@ -1,9 +1,14 @@
 {
   "pages": [
+    "protocols",
     "chat",
     "completions",
+    "embeddings",
+    "rerank",
     "images",
     "videos",
+    "audio",
+    "realtime",
     "models",
     "moderations",
     "unimplemented"

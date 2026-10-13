@@ -1,10 +1,15 @@
 {
   "title": "AI 模型接口",
   "pages": [
+    "protocols",
     "chat",
     "completions",
+    "embeddings",
+    "rerank",
     "images",
     "videos",
+    "audio",
+    "realtime",
     "models",
     "moderations",
     "unimplemented"

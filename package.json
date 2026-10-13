@@ -13,7 +13,9 @@
     "translate:all": "bun scripts/translate-docs.ts",
     "translate:force": "bun run translate",
     "generate:openapi:schemas": "bun scripts/generate-openapi-from-http.ts",
-    "generate:openapi": "bun scripts/generate-openapi-from-http.ts && bun scripts/generate-openapi-docs.ts"
+    "generate:openapi": "bun scripts/generate-openapi-from-http.ts && bun scripts/generate-openapi-docs.ts",
+    "sync:ai-protocols": "bun scripts/sync-ai-model-protocols.ts",
+    "test:ai-protocols": "node --import tsx --test scripts/ai-model-protocols.test.ts"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^1.0.27",

@@ -1,0 +1,126 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "获取模型详情",
+    "version": "1.0.0",
+    "description": "默认返回 OpenAI 模型结构；同时提供 x-api-key 与 anthropic-version 时返回 Anthropic 模型结构。模型不存在或无权访问时，当前实现可能在 HTTP 200 响应中返回 error，请同时检查响应体。"
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "GeminiApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-goog-api-key"
+      },
+      "GeminiQueryKey": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "key"
+      },
+      "AnthropicApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  },
+  "paths": {
+    "/v1/models/{model}": {
+      "get": {
+        "operationId": "retrievemodel",
+        "tags": [
+          "模型（Models）"
+        ],
+        "summary": "获取模型详情",
+        "description": "默认返回 OpenAI 模型结构；同时提供 x-api-key 与 anthropic-version 时返回 Anthropic 模型结构。模型不存在或无权访问时，当前实现可能在 HTTP 200 响应中返回 error，请同时检查响应体。",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "AnthropicApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "object": {
+                          "type": "string"
+                        },
+                        "created": {
+                          "type": "integer"
+                        },
+                        "owned_by": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "display_name": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "object",
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "model",
+            "in": "path",
+            "required": true,
+            "description": "平台可用的模型 ID，不带 models/ 前缀",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "anthropic-version",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "description": "请求 Anthropic 格式时设置，例如 2023-06-01。"
+          }
+        ]
+      }
+    }
+  }
+}

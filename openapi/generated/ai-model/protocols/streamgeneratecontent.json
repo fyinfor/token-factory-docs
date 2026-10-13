@@ -1,0 +1,181 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Gemini 流式生成格式",
+    "version": "1.0.0",
+    "description": "使用 Gemini contents/parts 请求结构。必须传入 alt=sse，网关据此开启流式模式；返回 text/event-stream，每个 data 事件为 Gemini 生成结果，不使用 OpenAI 的 [DONE] 约定。也支持 `/v1/models/{model}:streamGenerateContent?alt=sse` 兼容路径。"
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "GeminiApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-goog-api-key"
+      },
+      "GeminiQueryKey": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "key"
+      },
+      "AnthropicApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  },
+  "paths": {
+    "/v1beta/models/{model}:streamGenerateContent": {
+      "post": {
+        "operationId": "streamgeneratecontent",
+        "tags": [
+          "聊天（Chat）/原生Gemini格式"
+        ],
+        "summary": "Gemini 流式生成格式",
+        "description": "使用 Gemini contents/parts 请求结构。必须传入 alt=sse，网关据此开启流式模式；返回 text/event-stream，每个 data 事件为 Gemini 生成结果，不使用 OpenAI 的 [DONE] 约定。也支持 `/v1/models/{model}:streamGenerateContent?alt=sse` 兼容路径。",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "GeminiApiKey": []
+          },
+          {
+            "GeminiQueryKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gemini SSE 事件流；候选内容位于 candidates[].content.parts。",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "model",
+            "in": "path",
+            "required": true,
+            "description": "平台可用的模型 ID，不带 models/ 前缀",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "alt",
+            "in": "query",
+            "required": true,
+            "description": "必填，设置为 sse 以启用流式响应。",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "sse"
+              ],
+              "default": "sse"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "contents": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "role": {
+                          "type": "string"
+                        },
+                        "parts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": true,
+                            "properties": {
+                              "text": {
+                                "type": "string"
+                              }
+                            },
+                            "description": "文本使用 text；媒体输入、工具调用等按 Gemini 内容块格式填写。"
+                          }
+                        }
+                      },
+                      "required": [
+                        "parts"
+                      ]
+                    }
+                  },
+                  "systemInstruction": {
+                    "type": "object",
+                    "properties": {
+                      "role": {
+                        "type": "string"
+                      },
+                      "parts": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": true,
+                          "properties": {
+                            "text": {
+                              "type": "string"
+                            }
+                          },
+                          "description": "文本使用 text；媒体输入、工具调用等按 Gemini 内容块格式填写。"
+                        }
+                      }
+                    },
+                    "required": [
+                      "parts"
+                    ]
+                  },
+                  "generationConfig": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "safetySettings": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  },
+                  "tools": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  },
+                  "toolConfig": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "cachedContent": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "contents"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -3,6 +3,7 @@ import { createOpenAPI } from 'fumadocs-openapi/server';
 import { readdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { mkdir, readFile, access } from 'node:fs/promises';
+import { writeAiModelProtocolGuides, protocolFolderTitle } from './lib/ai-model-protocols';
 
 // Type for OpenAPI operation object
 interface OperationObject {
@@ -305,7 +306,7 @@ async function generate() {
     pages: aiModelSidebar.pages,
   });
   for (const [dir, title] of aiModelMeta.entries()) {
-    const meta: Record<string, unknown> = { title };
+    const meta: Record<string, unknown> = { title: protocolFolderTitle(title) };
     if (dir === 'videos') {
       meta.pages = aiModelSidebar.videosPages;
     }
@@ -317,6 +318,7 @@ async function generate() {
     }
     await writeMetaJson(`./content/docs/zh/api/ai-model/${dir}`, meta);
   }
+  await writeAiModelProtocolGuides();
 
   // Generate Management API docs with custom path control
   const managementMeta = new Map<string, string>(); // dir -> title

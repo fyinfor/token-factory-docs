@@ -1,0 +1,86 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Jev Decisions 兼容入口",
+    "version": "1.0.0",
+    "description": "与 /v1/systemone 使用同一原生协议和转发链路。请求使用 model、state、questions；响应保留上游结构。使用平台 Bearer API Key，不是管理接口。非流式。"
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "GeminiApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-goog-api-key"
+      },
+      "GeminiQueryKey": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "key"
+      },
+      "AnthropicApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  },
+  "paths": {
+    "/api/alpha/decisions": {
+      "post": {
+        "operationId": "createdecision",
+        "tags": [
+          "聊天（Chat）"
+        ],
+        "summary": "Jev Decisions 兼容入口",
+        "description": "与 /v1/systemone 使用同一原生协议和转发链路。请求使用 model、state、questions；响应保留上游结构。使用平台 Bearer API Key，不是管理接口。非流式。",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "description": "原生状态数据，具体结构由上游协议定义。"
+                  },
+                  "questions": {
+                    "description": "原生问题定义，具体结构由上游协议定义。"
+                  }
+                },
+                "required": [
+                  "model"
+                ],
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
